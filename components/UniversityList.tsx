@@ -2,7 +2,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ASIA_COUNTRIES } from '../constants';
 import { University, User } from '../types';
-import { MapPin, ArrowRight, Search, TrendingUp, Sparkles, Heart } from 'lucide-react';
+import { MapPin, ArrowRight, Search, TrendingUp, Heart, Map } from 'lucide-react';
 import { loadSavedUniversities, setUniversitySaved, upsertApplication } from '../services/cloudData';
 
 interface Props {
@@ -95,12 +95,18 @@ const UniversityList: React.FC<Props> = ({ onSelectUniversity, countryFilter, in
               className="group bg-[#1A1F26] rounded-[2.5rem] border border-gray-800 hover:border-emerald-500/50 transition-all duration-500 overflow-hidden shadow-xl"
             >
               <div className="relative h-48">
-                <img src={uni.image} alt={uni.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-60" />
-                <div className="absolute top-4 left-4 px-2.5 py-1 bg-emerald-500/20 backdrop-blur-md rounded-xl text-[10px] font-black text-emerald-300 border border-emerald-500/30 flex items-center gap-1 shadow-lg">
-                  <Sparkles size={11} className="text-emerald-400" /> 360° AI Tour
-                </div>
+                <img src={uni.image} alt={uni.name} loading="lazy" decoding="async" width="640" height="384" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-60" />
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${uni.name} ${uni.location}`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="absolute top-4 left-4 z-10 flex items-center gap-1 rounded-xl border border-emerald-500/30 bg-emerald-500/20 px-2.5 py-1 text-[10px] font-black text-emerald-300 shadow-lg backdrop-blur-md transition-colors hover:bg-emerald-500 hover:text-black"
+                  aria-label={`Open ${uni.name} location in Google Maps`}
+                >
+                  <Map size={11} /> Location Map
+                </a>
                 <div className="absolute top-4 right-4 px-3 py-1 bg-black/60 backdrop-blur-md rounded-xl text-[10px] font-black text-emerald-400 border border-emerald-500/20">
-                  RANK #{uni.ranking}
+                  REFERENCE RANK #{uni.ranking}
                 </div>
                 <button
                   onClick={() => toggleSaved(uni.id)}

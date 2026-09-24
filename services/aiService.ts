@@ -16,10 +16,15 @@ export class AiService {
   }
 
   private async callAi(prompt: string, jsonMode: boolean = false) {
+    const { data: sessionData } = await supabase.auth.getSession();
+    const accessToken = sessionData.session?.access_token;
+    if (!accessToken) throw new Error('Please sign in to use AI tools');
+
     const response = await fetch('/api/ai', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify({ prompt, jsonMode, provider: this.provider })
     });
@@ -67,3 +72,4 @@ export class AiService {
 }
 
 export const aiService = new AiService();
+import { supabase } from './supabase';

@@ -100,10 +100,10 @@ const UniversityDetail: React.FC<Props> = ({ university, onBack, userScores }) =
         <div className="lg:col-span-1 space-y-8">
           <div className="bg-[#1A1F26] p-8 rounded-[2.5rem] border border-gray-800 overflow-hidden shadow-2xl">
             <div className="relative -mx-8 -mt-8 mb-8 h-48">
-               <img src={university.image} className="w-full h-full object-cover opacity-60" alt={university.name} />
+               <img src={university.image} className="w-full h-full object-cover opacity-60" alt={university.name} width="1280" height="480" fetchPriority="high" />
                <div className="absolute inset-0 bg-gradient-to-t from-[#1A1F26] to-transparent" />
                <div className="absolute bottom-4 left-6">
-                  <span className="bg-emerald-500 text-black px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest">RANK #{university.ranking}</span>
+                  <span className="bg-emerald-500 text-black px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest">REFERENCE RANK #{university.ranking}</span>
                   <h1 className="text-2xl font-black mt-2 leading-tight text-white">{university.name}</h1>
                </div>
             </div>
@@ -155,7 +155,7 @@ const UniversityDetail: React.FC<Props> = ({ university, onBack, userScores }) =
             <div className="flex bg-[#0B0E14] p-3 md:p-4 gap-2 overflow-x-auto">
               {[
                 {id: 'requirements', label: 'Admission'},
-                {id: 'campus', label: 'Campus & Walkthrough'},
+                {id: 'campus', label: 'Campus & Location'},
                 {id: 'simulator', label: '🎮 24H Simulator'},
                 {id: 'radar', label: '📡 Maps Radar'},
                 {id: 'financial', label: 'Cost'},
@@ -198,7 +198,7 @@ const UniversityDetail: React.FC<Props> = ({ university, onBack, userScores }) =
                           </span>
                           <span className="text-[10px] font-mono text-gray-500">gemini-3.5-flash</span>
                         </div>
-                        <h4 className="text-xl font-black text-white mt-1">Live 2026/2027 Admissions & Policy Scan</h4>
+                        <h4 className="text-xl font-black text-white mt-1">Source-Linked Admissions & Policy Research</h4>
                         <p className="text-xs text-gray-400 mt-1 max-w-xl font-medium">
                           Cross-reference official application windows, IELTS/TOEFL requirements, and international scholarship quotas using live Google Search data.
                         </p>
@@ -255,7 +255,7 @@ const UniversityDetail: React.FC<Props> = ({ university, onBack, userScores }) =
                     <div className="space-y-4 max-w-2xl">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="px-3.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
-                          <Sparkles size={14} /> AI Campus Immersion 360°
+                          <Sparkles size={14} /> Interactive Campus Location
                         </span>
                         <span className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
                           <Eye size={13} /> Street View Panorama
@@ -266,7 +266,7 @@ const UniversityDetail: React.FC<Props> = ({ university, onBack, userScores }) =
                       </div>
 
                       <h3 className="text-2xl md:text-3xl font-black text-white leading-tight">
-                        Virtual Walkthrough & 360° Audio Immersion
+                        Campus Location Explorer & Student Experience
                       </h3>
 
                       <p className="text-sm text-gray-300 leading-relaxed font-medium">
@@ -302,6 +302,10 @@ const UniversityDetail: React.FC<Props> = ({ university, onBack, userScores }) =
                       <img 
                         src={university.image} 
                         alt={university.name}
+                        loading="lazy"
+                        decoding="async"
+                        width="640"
+                        height="352"
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 filter brightness-90 group-hover:brightness-105" 
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
@@ -312,7 +316,7 @@ const UniversityDetail: React.FC<Props> = ({ university, onBack, userScores }) =
                       </div>
                       <div className="absolute bottom-3 left-4 right-4 text-center">
                         <span className="text-[10px] font-black uppercase text-white tracking-widest bg-black/60 px-3 py-1 rounded-full backdrop-blur-md">
-                          Launch 360° Walkthrough
+                          Open Campus Explorer
                         </span>
                       </div>
                     </div>

@@ -456,7 +456,7 @@ const Profile: React.FC<Props> = ({
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10B981]" />
             </div>
             <p className="text-xs text-gray-400 leading-relaxed font-medium">
-              Connected to Google Gemini 3.5 Flash with live Google Search and Google Maps spatial grounding for instant 2026 admissions policy scans and 360° campus immersion.
+              Connected to source-linked admissions research and Google Maps location tools for campus planning and application support.
             </p>
           </div>
         </div>

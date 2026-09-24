@@ -170,7 +170,7 @@ export const CampusInfrastructureRadar: React.FC<Props> = ({ university }) => {
             Campus Infrastructure & Spatial Radar
           </h3>
           <p className="text-sm text-gray-400 mt-1 max-w-2xl font-medium">
-            Real-time distances to metro lines, dorm housing costs, verified Halal dining, and 24/7 health clinics surrounding {university.name}.
+            Explore nearby metro lines, dorm housing, dining, and health services around {university.name}; confirm details on the linked map before planning.
           </p>
         </div>
 

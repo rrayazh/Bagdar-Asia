@@ -207,7 +207,7 @@ const EssayAI: React.FC = () => {
                   onChange={e => setTargetUniName(e.target.value)}
                   className="w-full bg-[#0E1217] border border-gray-800 rounded-2xl p-4 text-white outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer appearance-none text-sm font-semibold"
                 >
-                  <option value="">-- Choose from 60 Verified Asian Universities --</option>
+                  <option value="">-- Choose from 60 Curated Asian Universities --</option>
                   {allUniversities.map(u => (
                     <option key={u.id} value={u.name}>
                       #{u.ranking} {u.name} ({u.location})

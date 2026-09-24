@@ -1,0 +1,10 @@
+{
+  "name": "Bagdar Asia Admissions Portal",
+  "short_name": "Bagdar Asia",
+  "description": "Discover, compare, and track applications to universities across Asia.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0e14",
+  "theme_color": "#34d399",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

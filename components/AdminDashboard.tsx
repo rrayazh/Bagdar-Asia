@@ -238,7 +238,7 @@ const AdminDashboard: React.FC<Props> = ({ currentUser, onOpenAuth, onNavigateHo
             <GraduationCap size={32} />
           </div>
           <div>
-            <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">Verified Universities</div>
+            <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">Curated Universities</div>
             <div className="text-3xl font-black text-white mt-1">60</div>
             <div className="text-[11px] text-blue-400 font-medium mt-0.5">Across 12 Asian Countries</div>
           </div>

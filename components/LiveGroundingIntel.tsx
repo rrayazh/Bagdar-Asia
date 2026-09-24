@@ -127,7 +127,7 @@ export const LiveGroundingIntel: React.FC<Props> = ({
           </h3>
           <p className="text-sm text-gray-400 mt-1 max-w-2xl font-medium">
             {mode === 'search'
-              ? 'Real-time verified admissions, 2026/2027 deadlines, scholarship quotas, and visa regulations backed by official web sources.'
+              ? 'Current admissions, deadlines, scholarships, and visa research with source links for independent verification.'
               : 'Pinpoint campus spatial geography, nearest transit hubs, student dorms, and neighborhood amenities backed by Google Maps.'}
           </p>
         </div>

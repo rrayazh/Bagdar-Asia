@@ -99,9 +99,9 @@ const ApplicationHub: React.FC<Props> = ({ currentUser, onOpenAuth, onSelectUniv
             return (
               <article key={application.id} className="overflow-hidden rounded-[2.5rem] border border-gray-800 bg-[#1A1F26] shadow-xl">
                 <div className="flex gap-5 p-6">
-                  <img src={university.image} alt="" className="h-24 w-24 rounded-2xl object-cover" />
+                  <img src={university.image} alt="" loading="lazy" decoding="async" width="96" height="96" className="h-24 w-24 rounded-2xl object-cover" />
                   <div className="min-w-0 flex-1">
-                    <div className="text-xs font-black uppercase tracking-wider text-emerald-400">Rank #{university.ranking}</div>
+                    <div className="text-xs font-black uppercase tracking-wider text-emerald-400">Reference rank #{university.ranking}</div>
                     <h2 className="mt-1 text-xl font-black">{university.name}</h2>
                     <p className="mt-1 text-xs text-gray-500">{university.location}</p>
                     <button onClick={() => onSelectUniversity(university)} className="mt-3 flex items-center gap-1 text-xs font-bold text-emerald-400 hover:text-white">

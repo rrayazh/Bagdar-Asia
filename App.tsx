@@ -154,6 +154,25 @@ const App: React.FC = () => {
     window.scrollTo(0, 0);
   }, [view, selectedUniversity]);
 
+  useEffect(() => {
+    const titles: Record<ViewState, string> = {
+      home: 'Bagdar Asia — Asian University Admissions',
+      universities: 'Explore Asian Universities | Bagdar Asia',
+      'university-detail': selectedUniversity ? `${selectedUniversity.name} Admissions | Bagdar Asia` : 'University Admissions | Bagdar Asia',
+      countries: 'Study Destinations in Asia | Bagdar Asia',
+      'grounding-intel': 'Admissions Research | Bagdar Asia',
+      planner: 'Application Strategy Planner | Bagdar Asia',
+      'essay-ai': 'Admissions Essay Assistant | Bagdar Asia',
+      deadlines: 'University Application Deadlines | Bagdar Asia',
+      profile: 'Applicant Profile | Bagdar Asia',
+      applications: 'Application Hub | Bagdar Asia',
+      admin: 'Administration | Bagdar Asia',
+    };
+    document.title = titles[view];
+    const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+    if (canonical) canonical.href = `https://bagdar-asia.vercel.app${window.location.pathname}`;
+  }, [view, selectedUniversity]);
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setCurrentUser(null);
@@ -347,7 +366,7 @@ const App: React.FC = () => {
               </div>
               <div>
                 <span className="text-2xl font-black text-white block">60 Universities</span>
-                <span className="text-xs text-gray-500 font-semibold mt-1 block">Verified & Ranked Institutions</span>
+                <span className="text-xs text-gray-500 font-semibold mt-1 block">Curated University Directory</span>
               </div>
             </div>
 
@@ -405,7 +424,7 @@ const App: React.FC = () => {
                   Live Grounded Admissions & Campus Geography
                 </h3>
                 <p className="text-sm text-gray-400 mt-1 max-w-xl font-medium">
-                  Query real-time 2026/2027 deadlines, scholarships, and navigate campus transit and student housing with gemini-3.5-flash grounding.
+                  Research current admissions, scholarships, campus transit, and student housing with source links and location context.
                 </p>
               </div>
             </div>

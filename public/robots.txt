@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://bagdar-asia.vercel.app/sitemap.xml

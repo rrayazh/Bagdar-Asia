@@ -223,7 +223,7 @@ export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, univers
         <div className="px-6 py-4 bg-[#161B22]/90 backdrop-blur-xl border-b border-gray-800 flex items-center justify-between gap-4 z-20">
           <div className="flex items-center gap-3">
             <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
-              <Sparkles size={14} /> AI Campus Immersion 360°
+              <Sparkles size={14} /> Interactive Campus Location
             </span>
             <div className="hidden sm:block text-xs font-bold text-gray-300 truncate max-w-xs md:max-w-md">
               {university.name} • {university.location}
@@ -278,7 +278,7 @@ export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, univers
                   : 'bg-[#161B22] border-gray-800 text-gray-300 hover:border-gray-600'
               }`}
             >
-              <Layers size={14} /> {isStreetViewMode ? 'Maps Street View' : 'Campus 360 Visual'}
+              <Layers size={14} /> {isStreetViewMode ? 'Maps Street View' : 'Campus Location View'}
             </button>
 
             {/* Fullscreen Button */}

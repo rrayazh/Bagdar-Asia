@@ -98,7 +98,7 @@ const StrategyPlanner: React.FC<Props> = ({ currentUser }) => {
               </div>
               <div className="flex gap-4 items-center">
                 <div className="p-4 bg-blue-500/10 rounded-2xl text-blue-400 border border-blue-500/20"><FileCheck size={24}/></div>
-                <div><div className="font-bold">Verified Status</div><div className="text-xs text-blue-400/70 font-black uppercase tracking-widest mt-1">Identity Check Passed</div></div>
+                <div><div className="font-bold">Workspace Status</div><div className="text-xs text-blue-400/70 font-black uppercase tracking-widest mt-1">{currentUser ? 'Cloud Sync Enabled' : 'Local Guest Mode'}</div></div>
               </div>
             </div>
           </div>
