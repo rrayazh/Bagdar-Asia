@@ -16,7 +16,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { User } from '../types';
-import { getRegisteredUsers } from './AuthModal';
+import { deleteCandidate, getAdminOverview, inviteCandidate } from '../services/adminService';
 
 interface Props {
   currentUser: User | null;
@@ -28,7 +28,9 @@ const AdminDashboard: React.FC<Props> = ({ currentUser, onOpenAuth, onNavigateHo
   const [users, setUsers] = useState<User[]>([]);
   const [search, setSearch] = useState('');
   const [selectedCountry, setSelectedCountry] = useState('all');
-  const [essayScansCount, setEssayScansCount] = useState<number>(0);
+  const [aiRequestsCount, setAiRequestsCount] = useState(0);
+  const [applicationCount, setApplicationCount] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newUserName, setNewUserName] = useState('');
   const [newUserEmail, setNewUserEmail] = useState('');
@@ -38,12 +40,18 @@ const AdminDashboard: React.FC<Props> = ({ currentUser, onOpenAuth, onNavigateHo
   // Check admin access
   const isAdmin = currentUser?.role === 'admin';
 
-  const loadData = () => {
-    const list = getRegisteredUsers();
-    setUsers(list);
-
-    const savedScans = localStorage.getItem('bagdar_essay_scans');
-    setEssayScansCount(savedScans ? parseInt(savedScans, 10) : 0);
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const overview = await getAdminOverview();
+      setUsers(overview.users);
+      setAiRequestsCount(overview.stats.aiRequests);
+      setApplicationCount(overview.stats.applications);
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Could not load admin data.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -57,35 +65,32 @@ const AdminDashboard: React.FC<Props> = ({ currentUser, onOpenAuth, onNavigateHo
     setTimeout(() => setToastMessage(null), 3500);
   };
 
-  const handleDeleteUser = (userId: string, userName: string) => {
+  const handleDeleteUser = async (userId: string, userName: string) => {
     if (window.confirm(`Are you sure you want to remove user "${userName}" from the portal registry?`)) {
-      const updated = users.filter(u => u.id !== userId);
-      setUsers(updated);
-      localStorage.setItem('bagdar_users', JSON.stringify(updated));
-      showToast(`User ${userName} has been removed.`);
+      try {
+        await deleteCandidate(userId);
+        setUsers(current => current.filter(u => u.id !== userId));
+        showToast(`User ${userName} has been removed.`);
+      } catch (error) {
+        showToast(error instanceof Error ? error.message : 'Could not remove user.');
+      }
     }
   };
 
-  const handleAddUserSubmit = (e: React.FormEvent) => {
+  const handleAddUserSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newUserName || !newUserEmail) return;
 
-    const newUser: User = {
-      id: `usr_${Date.now()}`,
-      name: newUserName.trim(),
-      email: newUserEmail.trim().toLowerCase(),
-      targetCountry: newUserCountry,
-      registeredAt: new Date().toISOString().split('T')[0],
-      role: 'user'
-    };
-
-    const updated = [newUser, ...users];
-    setUsers(updated);
-    localStorage.setItem('bagdar_users', JSON.stringify(updated));
-    setShowAddModal(false);
-    setNewUserName('');
-    setNewUserEmail('');
-    showToast(`Registered user ${newUser.name} added.`);
+    try {
+      await inviteCandidate({ name: newUserName.trim(), email: newUserEmail.trim().toLowerCase(), targetCountry: newUserCountry });
+      setShowAddModal(false);
+      setNewUserName('');
+      setNewUserEmail('');
+      await loadData();
+      showToast('Candidate invitation sent.');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Could not invite candidate.');
+    }
   };
 
   const exportCSV = () => {
@@ -213,8 +218,8 @@ const AdminDashboard: React.FC<Props> = ({ currentUser, onOpenAuth, onNavigateHo
           </div>
           <div>
             <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">Essay AI Scans</div>
-            <div className="text-3xl font-black text-white mt-1">{essayScansCount}</div>
-            <div className="text-[11px] text-purple-400 font-medium mt-0.5">Essay Reviews Completed</div>
+            <div className="text-3xl font-black text-white mt-1">{aiRequestsCount}</div>
+            <div className="text-[11px] text-purple-400 font-medium mt-0.5">Tracked AI Requests</div>
           </div>
         </div>
 
@@ -238,9 +243,9 @@ const AdminDashboard: React.FC<Props> = ({ currentUser, onOpenAuth, onNavigateHo
             <GraduationCap size={32} />
           </div>
           <div>
-            <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">Curated Universities</div>
-            <div className="text-3xl font-black text-white mt-1">60</div>
-            <div className="text-[11px] text-blue-400 font-medium mt-0.5">Across 12 Asian Countries</div>
+            <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">Applications</div>
+            <div className="text-3xl font-black text-white mt-1">{applicationCount}</div>
+            <div className="text-[11px] text-blue-400 font-medium mt-0.5">Saved Application Records</div>
           </div>
         </div>
       </div>
@@ -280,7 +285,7 @@ const AdminDashboard: React.FC<Props> = ({ currentUser, onOpenAuth, onNavigateHo
         <div className="p-6 md:p-8 border-b border-gray-800 flex flex-col md:flex-row items-center justify-between gap-4">
           <div>
             <h2 className="text-2xl font-black text-white">Registered Candidates Registry</h2>
-            <p className="text-gray-400 text-xs mt-1">Real-time local state synchronized with browser storage</p>
+            <p className="text-gray-400 text-xs mt-1">Secure account data synchronized with Supabase</p>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
@@ -324,7 +329,13 @@ const AdminDashboard: React.FC<Props> = ({ currentUser, onOpenAuth, onNavigateHo
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800/60 font-medium">
-              {users.length === 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan={6} className="py-16 text-center text-gray-400">
+                    <RefreshCw size={28} className="mx-auto mb-3 animate-spin" /> Loading account registry…
+                  </td>
+                </tr>
+              ) : users.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="py-16 text-center">
                     <div className="flex flex-col items-center justify-center">
