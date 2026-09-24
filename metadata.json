@@ -1,0 +1,12 @@
+{
+  "name": "Bagdar Asia",
+  "description": "Your Gateway to 60 Premier Asian Universities across 12 Countries",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
