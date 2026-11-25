@@ -1,7 +1,6 @@
 import { request } from './request';
 import { ASIA_COUNTRIES } from '../constants';
-import { responseLanguage, translate, type Locale } from '../i18n/locale';
-import { GoogleGenAI } from "@google/genai";
+import { translate, type Locale } from '../i18n/locale';
 import { GroundingResult, GroundingSource } from "../types";
 
 // Fallback campus coordinates for premier Asian universities to ensure pinpoint Maps Grounding
@@ -92,23 +91,6 @@ export const UNIVERSITY_COORDINATES: Record<string, { lat: number; lng: number; 
 };
 
 export class GroundingService {
-  private getClient(): GoogleGenAI {
-    const customKey = localStorage.getItem('gemini_api_key');
-    const key = customKey || (typeof process !== 'undefined' ? process.env?.GEMINI_API_KEY || process.env?.API_KEY : '');
-    return new GoogleGenAI({
-      apiKey: key,
-      httpOptions: {
-        headers: {
-          'User-Agent': 'aistudio-build'
-        }
-      }
-    });
-  }
-
-  /**
-   * Search Grounding using gemini-3.5-flash with googleSearch tool
-   * Retrieves real-time admissions, deadlines, visa changes, and scholarship quotas.
-   */
   async fetchSearchGroundedData(
     query: string,
     context?: { universityName?: string; location?: string; locale?: Locale }
@@ -129,10 +111,6 @@ export class GroundingService {
     }
   }
 
-  /**
-   * Maps Grounding using gemini-3.5-flash with googleMaps tool
-   * Retrieves campus geography, neighborhood navigation, nearby dorms, transit, and food.
-   */
   async fetchMapsGroundedData(
     query: string,
     options?: {
@@ -147,84 +125,15 @@ export class GroundingService {
     const uniName = options?.universityName || 'Asian University Campus';
     const uniLoc = options?.location || 'Asia';
     
-    // Check known coordinates or fallback to user coordinates
-    let latLng = options?.userCoordinates;
-    if (!latLng && options?.universityId && UNIVERSITY_COORDINATES[options.universityId]) {
-      const c = UNIVERSITY_COORDINATES[options.universityId];
-      latLng = { latitude: c.lat, longitude: c.lng };
-    }
-
-    const prompt = `You are a campus geographical guide for Bagdar Asia.
-Analyze the campus location, student transit, surrounding neighborhood, dormitories, and student amenities for ${uniName} in ${uniLoc}.
-Focus on:
-1. Exact campus district, landmark location, and campus accessibility.
-2. Nearest subway / metro stations, bus routes, and transit times to the central city / airport.
-3. Student accommodation options (on-campus dorms vs. popular off-campus rental neighborhoods).
-4. Student life hubs: popular cafeterias, study libraries, grocery supermarkets, and cafes around campus.
-
-Address this specific inquiry: "${query}".
-Provide a concise, helpful Markdown breakdown in ${responseLanguage[locale]}.`;
-
+    const campus = options?.universityId ? UNIVERSITY_COORDINATES[options.universityId] : undefined;
+    const coordinates = options?.userCoordinates ?? (campus ? { latitude: campus.lat, longitude: campus.lng } : undefined);
+    const prompt = [uniName, uniLoc, query.trim()].join(' | ');
     try {
-      const ai = this.getClient();
-      
-      const config: any = {
-        tools: [{ googleMaps: {} }]
-      };
-
-      if (latLng) {
-        config.toolConfig = {
-          retrievalConfig: {
-            latLng: {
-              latitude: latLng.latitude,
-              longitude: latLng.longitude
-            }
-          }
-        };
-      }
-
-      const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
-        contents: prompt,
-        config
+      const result = await request<Pick<GroundingResult, 'text' | 'sources'>>('/api/ai', 'POST', {
+        feature: 'campus_maps', prompt, locale, coordinates,
       });
-
-      const text = response.text || translate(locale, 'No location details available.');
-      const metadata = response.candidates?.[0]?.groundingMetadata;
-      const chunks = metadata?.groundingChunks || [];
-
-      const sources: GroundingSource[] = [];
-      const seenUris = new Set<string>();
-
-      for (const chunk of chunks) {
-        const mapsObj = (chunk as any)?.maps;
-        if (mapsObj?.uri && !seenUris.has(mapsObj.uri)) {
-          seenUris.add(mapsObj.uri);
-          sources.push({
-            title: mapsObj.title || `${uniName} on Google Maps`,
-            uri: mapsObj.uri,
-            type: 'maps'
-          });
-        }
-      }
-
-      // If model returned no direct map links, provide direct Google Maps query link
-      if (sources.length === 0) {
-        sources.push({
-          title: `View ${uniName} on Google Maps`,
-          uri: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(uniName + ' ' + uniLoc)}`,
-          type: 'maps'
-        });
-      }
-
-      return {
-        text,
-        sources,
-        groundingType: 'maps',
-        timestamp: new Date().toLocaleTimeString(locale)
-      };
-    } catch (err: any) {
-      console.warn("Maps Grounding API encountered an error, activating resilient maps intelligence:", err);
+      return { ...result, groundingType: 'maps', timestamp: new Date().toLocaleTimeString(locale) };
+    } catch {
       return this.mapsFallback(uniName, uniLoc, locale);
     }
   }

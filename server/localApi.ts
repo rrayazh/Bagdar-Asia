@@ -9,7 +9,7 @@ const routes = new Map([['/api/auth', auth], ['/api/admin', admin], ['/api/data'
 
 export function localApi(mode: string): Plugin {
   const env = loadEnv(mode, process.cwd(), '');
-  for (const name of ['TURSO_DATABASE_URL', 'TURSO_AUTH_TOKEN', 'ADMIN_EMAILS', 'ADMIN_BOOTSTRAP', 'GROQ_API_KEY', 'GROQ_MODEL', 'GEMINI_API_KEY', 'RESEND_API_KEY', 'AUTH_EMAIL_FROM', 'APP_ORIGIN', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET']) {
+  for (const name of ['TURSO_DATABASE_URL', 'TURSO_AUTH_TOKEN', 'ADMIN_EMAILS', 'ADMIN_BOOTSTRAP', 'GEMINI_API_KEY', 'RESEND_API_KEY', 'AUTH_EMAIL_FROM', 'APP_ORIGIN', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET']) {
     if (process.env[name] === undefined && env[name]) process.env[name] = env[name];
   }
   const configure: NonNullable<Plugin['configureServer']> = server => {

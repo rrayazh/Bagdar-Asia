@@ -14,7 +14,7 @@ Append the printed path to the website URL, open it, and register with the speci
 
 ## Deployment
 
-Set the server-only variables from `.env.example` in Vercel for the target environment. Configure a Resend API key, verified sender and exact deployment origin before enabling account email and password recovery. Set `APP_ORIGIN=http://localhost:3000` for local email links. Set `GROQ_API_KEY` to enable the text-based AI tools. Run `npm run lint` and `npm run build` before deploying.
+Set the server-only variables from `.env.example` in Vercel for the target environment. Configure a Resend API key, verified sender and exact deployment origin before enabling account email and password recovery. Set `APP_ORIGIN=http://localhost:3000` for local email links. Set `GEMINI_API_KEY` to enable the AI tools, Google Search, and Google Maps grounding. Run `npm run lint` and `npm run build` before deploying.
 
 Calendar reminders are delivered by the calendar app after an applicant imports the downloaded event.
 
