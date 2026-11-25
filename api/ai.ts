@@ -1,4 +1,4 @@
-import { db, endpoint, HttpError, id, requireUser } from '../server/backend';
+import { db, endpoint, HttpError, id, requireUser } from '../server/backend.js';
 
 const MAX_PROMPT_LENGTH = 30_000;
 const DAILY_REQUEST_LIMIT = 20;

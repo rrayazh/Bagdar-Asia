@@ -1,4 +1,4 @@
-import { createClient } from '@libsql/client';
+import { createClient } from '@libsql/client/web';
 import { createHash, randomBytes, randomUUID, scrypt, timingSafeEqual } from 'node:crypto';
 import { promisify } from 'node:util';
 import type { User } from '../types';
@@ -27,7 +27,9 @@ export function db() {
   database ??= (async () => {
     const url = process.env.TURSO_DATABASE_URL;
     if (!url) throw new HttpError(503, 'Database is not configured');
-    const client = createClient({ url, authToken: process.env.TURSO_AUTH_TOKEN });
+    if (process.env.VERCEL && url.startsWith('file:')) throw new HttpError(503, 'Database is not configured');
+    const factory = url.startsWith('file:') ? (await import('@libsql/client')).createClient : createClient;
+    const client = factory({ url, authToken: process.env.TURSO_AUTH_TOKEN });
     await client.batch(schema, 'write');
     return client;
   })().catch(error => { database = undefined; throw error; });

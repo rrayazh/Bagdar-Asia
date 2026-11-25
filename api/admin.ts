@@ -1,4 +1,4 @@
-import { db, digest, emailField, endpoint, HttpError, id, publicUser, requiresInvitation, requireUser, secret, textField } from '../server/backend';
+import { db, digest, emailField, endpoint, HttpError, id, publicUser, requiresInvitation, requireUser, secret, textField } from '../server/backend.js';
 
 export default endpoint(['GET', 'POST', 'DELETE'], async (req, res) => {
   const actor = await requireUser(req);

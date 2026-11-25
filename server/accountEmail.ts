@@ -1,4 +1,4 @@
-import { HttpError } from './backend';
+import { HttpError } from './backend.js';
 
 export function emailSettings() {
   const { RESEND_API_KEY: key, AUTH_EMAIL_FROM: from, APP_ORIGIN: origin } = process.env;

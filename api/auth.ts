@@ -1,5 +1,5 @@
-import { emailSettings, sendAccountEmail } from '../server/accountEmail';
-import { db, digest, emailField, endpoint, HttpError, id, passwordHash, publicUser, requiresInvitation, secret, sessionToken, setCookie, textField, userFor, verifyPassword } from '../server/backend';
+import { emailSettings, sendAccountEmail } from '../server/accountEmail.js';
+import { db, digest, emailField, endpoint, HttpError, id, passwordHash, publicUser, requiresInvitation, secret, sessionToken, setCookie, textField, userFor, verifyPassword } from '../server/backend.js';
 
 export default endpoint(['GET', 'POST', 'DELETE'], async (req, res) => {
   if (req.method === 'GET') return res.status(200).json(await userFor(req));

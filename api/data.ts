@@ -1,4 +1,4 @@
-import { db, endpoint, HttpError, id, requireUser, textField } from '../server/backend';
+import { db, endpoint, HttpError, id, requireUser, textField } from '../server/backend.js';
 
 const statuses = ['researching', 'shortlisted', 'documents', 'submitted', 'interview', 'decision'];
 const kinds = ['profile', 'planner', 'deadline', 'university', 'application'];
