@@ -3,9 +3,15 @@
 @tailwind utilities;
 
 :root {
+  --font-ui: 'Plus Jakarta Sans', 'Manrope', system-ui, sans-serif;
   color-scheme: dark;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+}
+
+:root:lang(kk),
+:root:lang(ru) {
+  --font-ui: 'Manrope', 'Plus Jakarta Sans', system-ui, sans-serif;
 }
 
 html {
@@ -18,7 +24,7 @@ body {
   min-width: 320px;
   background-color: #0b0e14;
   color: #fff;
-  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-family: var(--font-ui);
 }
 
 button,
