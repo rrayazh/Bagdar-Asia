@@ -139,10 +139,53 @@ export const ASIA_COUNTRIES: Country[] = [
   ]}
 ];
 
-// Exact closing times published by the university (Astana time).
+export const OFFICIAL_ADMISSIONS_REQUIREMENTS: Readonly<Record<string, string>> = {
+  kz_nu: 'https://nu.edu.kz/admissions/how-to-apply/foundation-undergraduate/regular-admissions/',
+  sg_ntu: 'https://www.ntu.edu.sg/admissions/undergraduate/admissions/general-admission-requirements/international-qualifications/other-international-qualifications',
+  sg_nus: 'https://www.nus.edu.sg/oam/admissions/international-qualifications-for-foreigners',
+};
+
+// Calendar dates without a published hour use an ISO date and the university time zone.
 export const UPCOMING_DEADLINES: Deadline[] = [
   { id: 'nu-2026-midyear-application', universityName: 'Nazarbayev University', countryFlag: '🇰🇿', date: '2026-11-28T14:00:00+05:00', label: '2026/27 mid-year application (fee-paying)', website: 'https://nu.edu.kz/admissions/how-to-apply/foundation-undergraduate/regular-admissions/' },
   { id: 'nu-2026-midyear-test-results', universityName: 'Nazarbayev University', countryFlag: '🇰🇿', date: '2026-11-28T23:59:00+05:00', label: '2026/27 mid-year test results', website: 'https://nu.edu.kz/admissions/how-to-apply/foundation-undergraduate/regular-admissions/' },
   { id: 'nu-2027-nuet-financial-support', universityName: 'Nazarbayev University', countryFlag: '🇰🇿', date: '2026-12-11T14:00:00+05:00', label: '2027/28 financial support: NUET applicants', website: 'https://nu.edu.kz/admissions/how-to-apply/foundation-undergraduate/financial-aid-end-scholarships/' },
   { id: 'nu-2027-other-financial-support', universityName: 'Nazarbayev University', countryFlag: '🇰🇿', date: '2027-01-28T14:00:00+05:00', label: '2027/28 financial support: other eligible categories', website: 'https://nu.edu.kz/admissions/how-to-apply/foundation-undergraduate/financial-aid-end-scholarships/' },
+  {
+    id: 'cuhk-2027-international-regular', universityName: 'The Chinese University of Hong Kong',
+    countryFlag: '🇭🇰', date: '2027-01-07', timeZone: 'Asia/Hong_Kong',
+    label: '2027 international undergraduate regular round',
+    website: 'https://admission.cuhk.edu.hk/application/overseas-other-qualifications-non-local-international-team/important-dates/',
+    requirementsUrl: 'https://admission.cuhk.edu.hk/application/overseas-other-qualifications-non-local-international-team/application-guides/',
+  },
+  {
+    id: 'ntu-2027-other-qualifications', universityName: 'Nanyang Technological University',
+    countryFlag: '🇸🇬', date: '2027-01-20', timeZone: 'Asia/Singapore',
+    label: '2027 other international qualifications (including Kazakhstan)',
+    website: 'https://www.ntu.edu.sg/docs/default-source/undergraduate-admissions/msr/emsr_intnl.pdf',
+    requirementsUrl: OFFICIAL_ADMISSIONS_REQUIREMENTS.sg_ntu,
+    requirementNote: 'A Kazakhstan high school certificate requires an additional qualification. Check NTU’s official list of accepted qualifications.',
+  },
+  {
+    id: 'nus-2027-international-non-ib', universityName: 'National University of Singapore',
+    countryFlag: '🇸🇬', date: '2027-02-17', timeZone: 'Asia/Singapore',
+    label: '2027/28 international qualifications (except IB)',
+    website: 'https://nus.edu.sg/oam/admissions/important-dates',
+    requirementsUrl: OFFICIAL_ADMISSIONS_REQUIREMENTS.sg_nus,
+  },
+  {
+    id: 'ntu-2027-ib', universityName: 'Nanyang Technological University',
+    countryFlag: '🇸🇬', date: '2027-03-19', timeZone: 'Asia/Singapore',
+    label: '2027 International Baccalaureate Diploma',
+    website: 'https://www.ntu.edu.sg/undergraduate/admissions',
+    requirementsUrl: 'https://www.ntu.edu.sg/docs/default-source/undergraduate-admissions/msr/emsr_ib.pdf',
+  },
+  {
+    id: 'hku-2027-international-final', universityName: 'The University of Hong Kong',
+    countryFlag: '🇭🇰', date: '2027-08-25T12:00:00+08:00', timeZone: 'Asia/Hong_Kong',
+    label: '2027 international qualifications final deadline',
+    website: 'https://admissions.hku.hk/apply/international-qualifications',
+    requirementsUrl: 'https://admissions.hku.hk/apply/international-qualifications',
+    requirementNote: 'HKU reviews applications submitted after the first round on a rolling basis. Check programme-specific dates.',
+  },
 ];

@@ -537,3 +537,16 @@ Set a new password|Жаңа құпиясөз орнату|Задать новы�
 Back to sign in|Кіруге қайту|Вернуться ко входу
 Forgot password?|Құпиясөзді ұмыттыңыз ба?|Забыли пароль?
 Illustrative campus layout|Үлгі кампус сызбасы|Иллюстративная схема кампуса
+2027 international undergraduate regular round|2027 халықаралық бакалавриаттың негізгі кезеңі|Основной этап международного приёма на бакалавриат 2027
+2027 other international qualifications (including Kazakhstan)|2027 басқа халықаралық біліктіліктер (Қазақстанды қоса)|Другие международные квалификации 2027 (включая Казахстан)
+A Kazakhstan high school certificate requires an additional qualification. Check NTU’s official list of accepted qualifications.|Қазақстанның мектеп аттестатына қосымша біліктілік қажет. NTU қабылдайтын біліктіліктердің ресми тізімін қараңыз.|Для школьного аттестата Казахстана нужна дополнительная квалификация. Проверьте официальный список NTU.
+2027/28 international qualifications (except IB)|2027/28 халықаралық біліктіліктер (IB-ден басқа)|Международные квалификации 2027/28 (кроме IB)
+2027 International Baccalaureate Diploma|2027 халықаралық бакалавриат дипломы (IB)|Диплом международного бакалавриата (IB) 2027
+2027 international qualifications final deadline|2027 халықаралық біліктіліктер бойынша соңғы мерзім|Окончательный срок для международных квалификаций 2027
+HKU reviews applications submitted after the first round on a rolling basis. Check programme-specific dates.|HKU бірінші кезеңнен кейін түскен өтінімдерді келіп түсу ретімен қарайды. Бағдарламаңыздың мерзімін бөлек тексеріңіз.|После первого этапа HKU рассматривает заявки по мере поступления. Уточните сроки для вашей программы.
+Dates come from university websites. Times use the university’s local time.|Мерзімдер университет сайттарынан алынды. Уақыт әр университеттің жергілікті уақытымен берілген.|Сроки взяты с сайтов университетов. Время указано по местному времени каждого университета.
+Import the calendar file for a reminder one day before. Enable alerts in your calendar.|Бір күн бұрын еске салу үшін файлды күнтізбеге импорттап, хабарламаны қосыңыз.|Импортируйте файл для напоминания за день и включите уведомления календаря.
+Check the official source for the closing time.|Өтінім қабылдаудың аяқталу сағатын ресми дереккөзден тексеріңіз.|Время окончания приёма уточняйте на официальном сайте.
+Official requirements|Ресми талаптар|Официальные требования
+Planning benchmarks|Жоспарлауға арналған көрсеткіштер|Ориентиры для планирования
+Read the university’s published admissions requirements|Университет жариялаған қабылдау талаптарын қараңыз|Посмотреть опубликованные университетом требования к поступлению

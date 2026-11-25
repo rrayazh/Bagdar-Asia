@@ -76,6 +76,9 @@ export interface Deadline {
   universityName: string;
   countryFlag: string;
   date: string;
+  timeZone?: string;
+  requirementsUrl?: string;
+  requirementNote?: string;
   label: string;
   website?: string;
 }

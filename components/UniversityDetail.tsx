@@ -1,3 +1,4 @@
+import { OFFICIAL_ADMISSIONS_REQUIREMENTS } from '../constants';
 import { essayFacts, localizeCost, monthlyLivingCost } from '../i18n/university';
 import { useLocale } from "../i18n/locale";
 import React, { useState } from 'react';
@@ -24,6 +25,7 @@ interface FAQItem {
 const UniversityDetail: React.FC<Props> = ({ university, onBack, userScores }) => {
   const { t, locale } = useLocale();
   const facts = essayFacts(university, locale);
+  const requirementsUrl = OFFICIAL_ADMISSIONS_REQUIREMENTS[university.id];
   const [activeTab, setActiveTab] = useState<'requirements' | 'campus' | 'simulator' | 'radar' | 'financial' | 'intel' | 'essay'>('requirements');
   const [intelInitialMode, setIntelInitialMode] = useState<'search' | 'maps'>('search');
   const [showImmersionModal, setShowImmersionModal] = useState(false);
@@ -209,13 +211,17 @@ const UniversityDetail: React.FC<Props> = ({ university, onBack, userScores }) =
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                     <div className="space-y-8">
                       <h4 className="text-xl font-black flex items-center gap-3 text-white">
-                        <Award className="text-emerald-500" /> {t("Academic Benchmarks")}
+                        <Award className="text-emerald-500" /> {t(requirementsUrl ? "Official requirements" : "Planning benchmarks")}
                       </h4>
-                      <ul className="space-y-5">
+                      {requirementsUrl ? (
+                        <a href={requirementsUrl} target="_blank" rel="noopener noreferrer" className="flex min-h-11 items-center gap-2 text-emerald-300 underline">
+                          <ExternalLink size={16} /> {t("Read the university’s published admissions requirements")}
+                        </a>
+                      ) : <ul className="space-y-5">
                         <li className="flex justify-between items-center bg-black/20 p-5 rounded-2xl border border-white/5 shadow-sm"><span className="text-gray-500 font-bold uppercase text-[10px] tracking-widest">{t("GPA (Min)")}</span><span className="font-black text-emerald-400 text-lg">{university.admissionRequirements.gpa}</span></li>
                         <li className="flex justify-between items-center bg-black/20 p-5 rounded-2xl border border-white/5 shadow-sm"><span className="text-gray-500 font-bold uppercase text-[10px] tracking-widest">{t("SAT / Test")}</span><span className="font-black text-emerald-400 text-lg">{t(university.admissionRequirements.sat)}</span></li>
                         <li className="flex justify-between items-center bg-black/20 p-5 rounded-2xl border border-white/5 shadow-sm"><span className="text-gray-500 font-bold uppercase text-[10px] tracking-widest">IELTS / TOEFL</span><span className="font-black text-emerald-400 text-lg">{university.admissionRequirements.ielts}</span></li>
-                      </ul>
+                      </ul>}
                     </div>
                     <div className="space-y-8">
                       <h4 className="text-xl font-black flex items-center gap-3 text-white">

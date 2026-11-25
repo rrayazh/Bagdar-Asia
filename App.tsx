@@ -13,7 +13,8 @@ const Deadlines = lazy(() => import('./components/Deadlines'));
 const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
 const LiveGroundingIntel = lazy(() => import('./components/LiveGroundingIntel'));
 const ApplicationHub = lazy(() => import('./components/ApplicationHub'));
-import { ASIA_COUNTRIES, UPCOMING_DEADLINES } from './constants';
+import { ASIA_COUNTRIES } from './constants';
+import { formatDeadline, upcomingDeadlines } from './services/deadlines';
 import { currentUser as loadSession, signOut } from './services/auth';
 import { 
   GraduationCap, 
@@ -130,8 +131,8 @@ const App: React.FC = () => {
     }
   }, [view, selectedUniversity]);
 
-  // Active countdown timer state for Hero Stat Card
-  const [nearestCountdown, setNearestCountdown] = useState<{ days: number; hours: number; minutes: number; seconds: number } | null>(null);
+  const [now, setNow] = useState(Date.now);
+  const nextDeadline = upcomingDeadlines(now)[0];
 
   useEffect(() => {
     let active = true;
@@ -141,27 +142,12 @@ const App: React.FC = () => {
     return () => { active = false; };
   }, []);
 
-  // Nearest deadline live ticker
   useEffect(() => {
-    const updateCountdown = () => {
-      const now = Date.now();
-      const targetDate = Math.min(...UPCOMING_DEADLINES.map(item => Date.parse(item.date)).filter(date => date > now));
-      const diff = targetDate - now;
-      if (Number.isFinite(diff) && diff > 0) {
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-        const minutes = Math.floor((diff / 1000 / 60) % 60);
-        const seconds = Math.floor((diff / 1000) % 60);
-        setNearestCountdown({ days, hours, minutes, seconds });
-      } else {
-        setNearestCountdown(null);
-      }
-    };
-
-    updateCountdown();
-    const interval = setInterval(updateCountdown, 1000);
+    if (view !== 'home') return;
+    setNow(Date.now());
+    const interval = setInterval(() => setNow(Date.now()), 60_000);
     return () => clearInterval(interval);
-  }, []);
+  }, [view]);
 
   // Reset scroll position to top whenever the view changes
   useEffect(() => {
@@ -405,7 +391,7 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            {/* Stat Card 3: Live Deadlines with active countdown */}
+            {/* Stat Card 3: Next verified deadline */}
             <div 
               className="card-dark p-8 md:p-10 rounded-[2.5rem] flex flex-col items-center gap-4 cursor-pointer hover:scale-105 transition-all border border-gray-800 hover:border-blue-500/40"
               onClick={() => setView('deadlines')}
@@ -415,9 +401,9 @@ const App: React.FC = () => {
               </div>
               <div>
                 <span className="text-2xl font-black text-white block">{t("Live Deadlines")}</span>
-                {nearestCountdown ? (
-                  <span className="text-xs text-emerald-400 font-mono font-bold mt-1 block">
-                    {t("Next:")} {nearestCountdown.days}{t("d")} {nearestCountdown.hours}{t("h")} {nearestCountdown.minutes}{t("m")} {nearestCountdown.seconds}{t("s")}
+                {nextDeadline ? (
+                  <span className="text-xs text-emerald-400 font-semibold mt-1 block">
+                    {t("Next:")} {formatDeadline(nextDeadline, locale)}
                   </span>
                 ) : (
                   <span className="text-xs text-gray-500 font-semibold mt-1 block">{t("No upcoming verified deadlines are listed.")}</span>
