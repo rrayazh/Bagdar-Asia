@@ -71,7 +71,7 @@ export async function userFor(req: any) {
   const token = sessionToken(req);
   if (!token) return null;
   const { rows } = await (await db()).execute({
-    sql: 'SELECT users.* FROM sessions JOIN users ON users.id = sessions.user_id JOIN verified_emails ON verified_emails.user_id = users.id WHERE token = ? AND expires > ?',
+    sql: 'SELECT users.* FROM sessions JOIN users ON users.id = sessions.user_id WHERE token = ? AND expires > ?',
     args: [token, Date.now()],
   });
   return rows[0] ? publicUser(rows[0]) : null;

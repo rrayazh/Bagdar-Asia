@@ -93,11 +93,11 @@ const AuthModal: React.FC<Props> = ({ isOpen, onClose, onLoginSuccess, initialTa
         setEmailAction(null);
         setNotice('If eligible, an account link will be sent to that email.');
       } else if (tab === 'register') {
-        await register(email, password, fullName, targetCountry, new URLSearchParams(linkHash.slice(1)).get('invite') || undefined, locale);
+        onLoginSuccess(await register(email, password, fullName, targetCountry, new URLSearchParams(linkHash.slice(1)).get('invite') || undefined));
         if (linkHash.startsWith('#invite=')) clearLink();
-        setTab('signin');
         setPassword('');
-        setNotice('Check your inbox to verify your email.');
+        setNotice('');
+        onClose();
       } else {
         onLoginSuccess(await signIn(email, password));
         if (googleError) clearLink();

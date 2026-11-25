@@ -1,5 +1,5 @@
 import { emailSettings, sendAccountEmail } from '../server/accountEmail.js';
-import { db, digest, emailField, endpoint, HttpError, id, passwordHash, publicUser, requiresInvitation, secret, sessionToken, setCookie, textField, userFor, verifyPassword } from '../server/backend.js';
+import { db, digest, emailField, endpoint, HttpError, id, passwordHash, publicUser, requiresInvitation, secret, SESSION_SECONDS, sessionToken, setCookie, textField, userFor, verifyPassword } from '../server/backend.js';
 
 export default endpoint(['GET', 'POST', 'DELETE'], async (req, res) => {
   if (req.method === 'GET') return res.status(200).json(await userFor(req));
@@ -68,7 +68,7 @@ export default endpoint(['GET', 'POST', 'DELETE'], async (req, res) => {
   };
 
   const found = await client.execute({ sql: 'SELECT users.*, verified_emails.user_id AS verified FROM users LEFT JOIN verified_emails ON users.id = verified_emails.user_id WHERE email = ?', args: [email] });
-  let row = found.rows[0];
+  const row = found.rows[0];
   if (action === 'forgot' || action === 'resend') {
     emailSettings();
     if (row?.password && (action === 'forgot' || !row.verified)) {
@@ -78,43 +78,50 @@ export default endpoint(['GET', 'POST', 'DELETE'], async (req, res) => {
     return res.status(200).json({ ok: true });
   }
 
+  const token = secret();
+  const sessionHash = digest(token);
+  const expires = now + SESSION_SECONDS * 1000;
   if (action === 'signin') {
     if (!(await verifyPassword(password, typeof row?.password === 'string' ? row.password : null))) {
       throw new HttpError(401, 'Email or password is incorrect');
     }
-    if (!row.verified) throw new HttpError(403, 'Verify your email before signing in');
   } else {
-    emailSettings();
     const name = textField(req.body.name, 120).trim();
     const country = textField(req.body.targetCountry, 120).trim();
     const hash = await passwordHash(password);
+    const reserved = requiresInvitation(email);
+    const userId = row ? String(row.id) : id();
+    let registration;
     if (row || typeof invitation === 'string' && invitation) {
       if (typeof invitation !== 'string' || invitation.length !== 43) throw new HttpError(409, 'Sign in or use your invitation link');
-      const result = await client.execute({
-        sql: 'UPDATE users SET password = ?, invitation = NULL, invitation_expires = NULL WHERE email = ? AND password IS NULL AND invitation = ? AND invitation_expires > ? RETURNING *',
-        args: [hash, email, digest(invitation), now],
-      });
-      row = result.rows[0];
-      if (!row) throw new HttpError(400, 'Invitation is invalid or expired');
+      registration = {
+        sql: 'UPDATE users SET password = ?, invitation = NULL, invitation_expires = NULL, last_sign_in = ? WHERE id = ? AND password IS NULL AND invitation = ? AND invitation_expires > ? AND admin_eligible = ? RETURNING *',
+        args: [hash, now, userId, digest(invitation), now, reserved ? 1 : 0],
+      };
     } else {
-      if (requiresInvitation(email)) throw new HttpError(403, 'This administrator account requires an invitation');
-      const result = await client.execute({
-        sql: 'INSERT INTO users (id, email, name, country, password, created) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(email) DO NOTHING RETURNING *',
-        args: [id(), email, name, country, hash, new Date(now).toISOString()],
-      });
-      row = result.rows[0];
-      if (!row) throw new HttpError(409, 'Sign in or use your invitation link');
+      if (reserved) throw new HttpError(403, 'This administrator account requires an invitation');
+      registration = {
+        sql: 'INSERT INTO users (id, email, name, country, password, created, last_sign_in) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT(email) DO NOTHING RETURNING *',
+        args: [userId, email, name, country, hash, new Date(now).toISOString(), now],
+      };
     }
-    await deliver(String(row.id), 'verify');
-    return res.status(201).json({ verificationRequired: true });
+    const [result] = await client.batch([registration, {
+      sql: 'INSERT INTO sessions SELECT ?, id, ? FROM users WHERE id = ? AND password = ?',
+      args: [sessionHash, expires, userId, hash],
+    }], 'write');
+    if (!result.rows[0]) {
+      if (invitation) throw new HttpError(400, 'Invitation is invalid or expired');
+      throw new HttpError(409, 'An account already uses this email');
+    }
+    setCookie(req, res, token);
+    return res.status(201).json(publicUser(result.rows[0]));
   }
 
-  const token = secret();
   const results = await client.batch([
     { sql: 'DELETE FROM sessions WHERE expires <= ? OR token = ?', args: [now, sessionToken(req) || ''] },
     { sql: 'DELETE FROM auth_attempts WHERE expires <= ?', args: [now] },
     { sql: 'UPDATE users SET last_sign_in = ? WHERE id = ? AND password = ?', args: [new Date(now).toISOString(), row.id, row.password] },
-    { sql: 'INSERT INTO sessions SELECT ?, id, ? FROM users WHERE id = ? AND password = ?', args: [digest(token), now + 14 * 86_400_000, row.id, row.password] },
+    { sql: 'INSERT INTO sessions SELECT ?, id, ? FROM users WHERE id = ? AND password = ?', args: [sessionHash, expires, row.id, row.password] },
   ], 'write');
   if (!results.at(-1).rowsAffected) throw new HttpError(401, 'Email or password is incorrect');
   setCookie(req, res, token);
