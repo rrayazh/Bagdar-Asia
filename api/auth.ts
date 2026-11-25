@@ -90,19 +90,22 @@ export default endpoint(['GET', 'POST', 'DELETE'], async (req, res) => {
     const country = textField(req.body.targetCountry, 120).trim();
     const hash = await passwordHash(password);
     const reserved = requiresInvitation(email);
+    const [bootstrapEmail, bootstrapHash, bootstrapExpiry] = (process.env.ADMIN_BOOTSTRAP || '').split(':');
+    const bootstrap = reserved && !row && email === bootstrapEmail && Number(bootstrapExpiry) > now &&
+      typeof invitation === 'string' && invitation.length === 43 && digest(invitation) === bootstrapHash;
     const userId = row ? String(row.id) : id();
     let registration;
-    if (row || typeof invitation === 'string' && invitation) {
+    if (!bootstrap && (row || typeof invitation === 'string' && invitation)) {
       if (typeof invitation !== 'string' || invitation.length !== 43) throw new HttpError(409, 'Sign in or use your invitation link');
       registration = {
         sql: 'UPDATE users SET password = ?, invitation = NULL, invitation_expires = NULL, last_sign_in = ? WHERE id = ? AND password IS NULL AND invitation = ? AND invitation_expires > ? AND admin_eligible = ? RETURNING *',
         args: [hash, now, userId, digest(invitation), now, reserved ? 1 : 0],
       };
     } else {
-      if (reserved) throw new HttpError(403, 'This administrator account requires an invitation');
+      if (reserved && !bootstrap) throw new HttpError(403, 'This administrator account requires an invitation');
       registration = {
-        sql: 'INSERT INTO users (id, email, name, country, password, created, last_sign_in) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT(email) DO NOTHING RETURNING *',
-        args: [userId, email, name, country, hash, new Date(now).toISOString(), now],
+        sql: 'INSERT INTO users (id, email, name, country, password, created, last_sign_in, admin_eligible) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(email) DO NOTHING RETURNING *',
+        args: [userId, email, name, country, hash, new Date(now).toISOString(), now, bootstrap ? 1 : 0],
       };
     }
     const [result] = await client.batch([registration, {

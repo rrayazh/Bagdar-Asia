@@ -52,7 +52,7 @@ export function publicUser(row: Record<string, unknown>): User {
   return {
     id: String(row.id), email, name: String(row.name), targetCountry: String(row.country),
     registeredAt: String(row.created).split('T')[0],
-    role: row.admin_eligible === 1 && admins().includes(email) ? 'admin' : 'user',
+    role: (row.admin_eligible === 2 || (row.admin_eligible === 1 && admins().includes(email))) ? 'admin' : 'user',
   };
 }
 

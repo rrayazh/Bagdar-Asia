@@ -17,7 +17,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { User } from '../types';
-import { deleteCandidate, getAdminOverview, inviteCandidate, type AdminUser } from '../services/adminService';
+import { createAdministrator, deleteCandidate, getAdminOverview, inviteCandidate, type AdminUser } from '../services/adminService';
 
 interface Props {
   currentUser: User | null;
@@ -34,6 +34,9 @@ const AdminDashboard: React.FC<Props> = ({ currentUser, onOpenAuth, onNavigateHo
   const [applicationCount, setApplicationCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [createAdmin, setCreateAdmin] = useState(false);
+  const [newAdminPassword, setNewAdminPassword] = useState('');
+  const [savingAccount, setSavingAccount] = useState(false);
   const [newUserName, setNewUserName] = useState('');
   const [newUserEmail, setNewUserEmail] = useState('');
   const [newUserCountry, setNewUserCountry] = useState('Singapore');
@@ -82,17 +85,27 @@ const AdminDashboard: React.FC<Props> = ({ currentUser, onOpenAuth, onNavigateHo
 
   const handleAddUserSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newUserName || !newUserEmail) return;
-
+    if (!newUserName || !newUserEmail || savingAccount) return;
+    const account = { name: newUserName.trim(), email: newUserEmail.trim(), targetCountry: newUserCountry };
+    setSavingAccount(true);
     try {
-      const { invitation } = await inviteCandidate({ name: newUserName.trim(), email: newUserEmail.trim().toLowerCase(), targetCountry: newUserCountry });
+      if (createAdmin) {
+        await createAdministrator({ ...account, password: newAdminPassword });
+        showToast(t('Administrator created.'));
+      } else {
+        const { invitation } = await inviteCandidate(account);
+        setInvitationLink(window.location.origin + '/#invite=' + invitation);
+      }
       setShowAddModal(false);
+      setCreateAdmin(false);
+      setNewAdminPassword('');
       setNewUserName('');
       setNewUserEmail('');
       await loadData();
-      setInvitationLink(window.location.origin + '/#invite=' + invitation);
     } catch (error) {
-      showToast(error instanceof Error ? error.message : 'Could not invite candidate.');
+      showToast(error instanceof Error ? error.message : 'Could not create account.');
+    } finally {
+      setSavingAccount(false);
     }
   };
 
@@ -410,8 +423,13 @@ const AdminDashboard: React.FC<Props> = ({ currentUser, onOpenAuth, onNavigateHo
       {showAddModal && (
         <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="w-full max-w-md bg-[#161B22] border border-gray-800 rounded-3xl p-8 shadow-2xl text-white">
-            <h3 className="text-xl font-black mb-4">{t("Add Registered Candidate")}</h3>
+            <h3 className="text-xl font-black mb-4">{t(createAdmin ? "Add administrator" : "Add Registered Candidate")}</h3>
             <form onSubmit={handleAddUserSubmit} className="space-y-4">
+              <label htmlFor="create-administrator" className="flex items-center gap-2 text-sm">
+                <input id="create-administrator" type="checkbox" checked={createAdmin} disabled={savingAccount}
+                  onChange={e => { setCreateAdmin(e.target.checked); setNewAdminPassword(''); }} />
+                {t("Add administrator")}
+              </label>
               <div>
                 <label className="block text-xs font-bold text-gray-400 mb-1">{t("Full Name")}</label>
                 <input
@@ -445,19 +463,29 @@ const AdminDashboard: React.FC<Props> = ({ currentUser, onOpenAuth, onNavigateHo
                   className="w-full bg-[#0D1117] border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
+              {createAdmin && (
+                <div>
+                  <label htmlFor="new-admin-password" className="block text-xs font-bold text-gray-400 mb-1">{t("Password")}</label>
+                  <input id="new-admin-password" type="password" required minLength={12} maxLength={256}
+                    autoComplete="new-password" value={newAdminPassword} onChange={e => setNewAdminPassword(e.target.value)}
+                    className="w-full bg-[#0D1117] border border-gray-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                </div>
+              )}
               <div className="flex gap-3 pt-2">
                 <button
                   type="button"
-                  onClick={() => setShowAddModal(false)}
+                  disabled={savingAccount}
+                  onClick={() => { setShowAddModal(false); setCreateAdmin(false); setNewAdminPassword(''); }}
                   className="flex-1 py-3 bg-gray-800 text-gray-300 font-bold rounded-xl hover:bg-gray-700 transition-colors text-sm"
                 >
                   {t("Cancel")}
                 </button>
                 <button
                   type="submit"
+                  disabled={savingAccount}
                   className="flex-1 py-3 bg-emerald-500 text-black font-black rounded-xl hover:bg-emerald-400 transition-colors text-sm"
                 >
-                  {t("Save Candidate")}
+                  {t(createAdmin ? "Create administrator" : "Save Candidate")}
                 </button>
               </div>
             </form>

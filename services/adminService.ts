@@ -14,3 +14,6 @@ export const getAdminOverview = () => request<AdminOverview>('/api/admin');
 export const inviteCandidate = (candidate: { name: string; email: string; targetCountry: string }) =>
   request<{ invitation: string }>('/api/admin', 'POST', candidate);
 export const deleteCandidate = (userId: string) => request('/api/admin', 'DELETE', { userId });
+
+export const createAdministrator = (account: { name: string; email: string; targetCountry: string; password: string }) =>
+  request<{ userId: string }>('/api/admin', 'POST', { action: 'createAdmin', ...account });

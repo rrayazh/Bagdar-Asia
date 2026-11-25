@@ -1,4 +1,4 @@
-import { db, digest, emailField, endpoint, HttpError, id, publicUser, requiresInvitation, requireUser, secret, textField } from '../server/backend.js';
+import { db, digest, emailField, endpoint, HttpError, id, passwordHash, publicUser, requiresInvitation, requireUser, secret, textField } from '../server/backend.js';
 
 export default endpoint(['GET', 'POST', 'DELETE'], async (req, res) => {
   const actor = await requireUser(req);
@@ -24,9 +24,23 @@ export default endpoint(['GET', 'POST', 'DELETE'], async (req, res) => {
     if (requiresInvitation(email)) throw new HttpError(400, 'Use the administrator registration script for this email');
     const name = textField(req.body?.name, 120).trim();
     const country = textField(req.body?.targetCountry, 120).trim();
-    const invitation = secret();
     const now = Date.now();
     const userId = id();
+    if (req.body.action === 'createAdmin') {
+      const password = textField(req.body.password, 256);
+      if (password.length < 12) throw new HttpError(400, 'Use at least 12 characters for the administrator password.');
+      const [result] = await client.batch([
+        {
+          sql: 'INSERT INTO users (id, email, name, country, password, created, admin_eligible) VALUES (?, ?, ?, ?, ?, ?, 2) ON CONFLICT(email) DO NOTHING',
+          args: [userId, email, name, country, await passwordHash(password), new Date(now).toISOString()],
+        },
+        { sql: "INSERT INTO admin_audit SELECT ?, ?, 'admin.created', id, ? FROM users WHERE id = ?", args: [id(), actor.id, now, userId] },
+      ], 'write');
+      if (!result.rowsAffected) throw new HttpError(409, 'An account or invitation already exists for this email');
+      return res.status(201).json({ userId });
+    }
+
+    const invitation = secret();
     const [result] = await client.batch([
       { sql: 'INSERT INTO users (id, email, name, country, invitation, invitation_expires, created) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT(email) DO NOTHING', args: [userId, email, name, country, digest(invitation), now + 86_400_000, new Date(now).toISOString()] },
       { sql: "INSERT INTO admin_audit SELECT ?, ?, 'user.invited', id, ? FROM users WHERE id = ?", args: [id(), actor.id, now, userId] },

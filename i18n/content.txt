@@ -556,3 +556,8 @@ Google sign-in did not finish. Please try again.|Google арқылы кіру а
 Google sign-in was cancelled.|Google арқылы кіруден бас тартылды.|Вход через Google отменён.
 This email has an existing account. Use its original sign-in method.|Бұл поштаға аккаунт тіркелген. Бұрынғы кіру әдісін қолданыңыз.|Для этой почты уже есть аккаунт. Используйте прежний способ входа.
 Use a Gmail or Google Workspace account to continue.|Жалғастыру үшін Gmail немесе Google Workspace аккаунтын қолданыңыз.|Для продолжения используйте аккаунт Gmail или Google Workspace.
+
+Add administrator|Әкімші қосу|Добавить администратора
+Create administrator|Әкімші аккаунтын жасау|Создать администратора
+Administrator created.|Әкімші аккаунты жасалды.|Аккаунт администратора создан.
+Use at least 12 characters for the administrator password.|Әкімші құпиясөзі кемінде 12 таңбадан тұруы керек.|Пароль администратора должен содержать не менее 12 символов.
