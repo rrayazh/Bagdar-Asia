@@ -1,3 +1,4 @@
+import { useLocale } from "../i18n/locale";
 import React, { useState, useEffect } from 'react';
 import { 
   UserCircle, 
@@ -66,6 +67,7 @@ const Profile: React.FC<Props> = ({
   onNavigate, 
   onScoresUpdate 
 }) => {
+  const { t } = useLocale();
   const [applicantData, setApplicantData] = useState<ApplicantData>(() => {
     try {
       const saved = localStorage.getItem('bagdar_applicant_profile');
@@ -168,25 +170,25 @@ const Profile: React.FC<Props> = ({
             <div>
               <div className="flex items-center gap-3">
                 <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight">
-                  {currentUser ? currentUser.name : 'Asian Admissions Applicant'}
+                  {currentUser ? currentUser.name : t("Asian Admissions Applicant")}
                 </h1>
                 <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5">
                   <ShieldCheck size={12} />
-                  {currentUser ? 'Verified Applicant' : 'Guest Profile'}
+                  {currentUser ? t("Verified Applicant") : t("Guest Profile")}
                 </span>
               </div>
               <p className="text-gray-400 text-sm font-medium mt-1">
-                {currentUser ? currentUser.email : 'Complete your profile to customize university matching and essay strategy.'}
+                {currentUser ? currentUser.email : t("Complete your profile to customize university matching and essay strategy.")}
               </p>
               <div className="flex flex-wrap items-center gap-4 mt-3 text-xs font-semibold text-gray-500">
                 <span className="flex items-center gap-1.5 text-gray-400">
-                  <Calendar size={13} className="text-emerald-500" /> Intake: {applicantData.targetIntake}
+                  <Calendar size={13} className="text-emerald-500" /> {t("Intake:")} {t(applicantData.targetIntake)}
                 </span>
                 <span className="flex items-center gap-1.5 text-gray-400">
-                  <BookOpen size={13} className="text-emerald-500" /> Focus: {applicantData.major}
+                  <BookOpen size={13} className="text-emerald-500" /> {t("Focus:")} {t(applicantData.major)}
                 </span>
                 <span className="flex items-center gap-1.5 text-gray-400">
-                  <Globe size={13} className="text-emerald-500" /> Region: 12 Asian Countries
+                  <Globe size={13} className="text-emerald-500" /> {t("Region: 12 Asian Countries")}
                 </span>
               </div>
             </div>
@@ -198,26 +200,26 @@ const Profile: React.FC<Props> = ({
                 onClick={onOpenAuth}
                 className="px-5 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 flex-1 md:flex-initial"
               >
-                <LogIn size={15} /> Sign In / Register
+                <LogIn size={15} /> {t("Sign In / Register")}
               </button>
             )}
             <button
               onClick={() => setIsEditing(!isEditing)}
               className="px-5 py-3 rounded-2xl bg-[#21262D] hover:bg-[#30363D] text-gray-200 hover:text-white font-black text-xs uppercase tracking-wider transition-all border border-gray-700/60 flex items-center justify-center gap-2 flex-1 md:flex-initial"
             >
-              {isEditing ? 'Cancel Editing' : 'Edit Academic Metrics'}
+              {isEditing ? t("Cancel Editing") : t("Edit Academic Metrics")}
             </button>
           </div>
         </div>
 
         {savedSuccess && (
           <div className="mt-6 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold flex items-center gap-2 animate-in fade-in">
-            <CheckCircle2 size={16} /> Academic profile updated and saved to your applicant workspace.
+            <CheckCircle2 size={16} /> {t("Academic profile updated and saved to your applicant workspace.")}
           </div>
         )}
         {saveError && (
           <div className="mt-6 p-4 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs font-bold">
-            {saveError}
+            {t(saveError)}
           </div>
         )}
       </div>
@@ -227,21 +229,21 @@ const Profile: React.FC<Props> = ({
         <form onSubmit={handleSave} className="bg-[#161B22] rounded-[2.5rem] border border-emerald-500/40 p-8 shadow-2xl space-y-6 animate-in fade-in slide-in-from-top-4 duration-300">
           <div className="flex items-center justify-between border-b border-gray-800 pb-4">
             <h3 className="text-lg font-black text-white flex items-center gap-2">
-              <GraduationCap className="text-emerald-400" size={20} /> Edit Academic Benchmarks
+              <GraduationCap className="text-emerald-400" size={20} /> {t("Edit Academic Benchmarks")}
             </h3>
-            <span className="text-xs text-gray-400 font-medium">Used to benchmark 60 Asian University requirements</span>
+            <span className="text-xs text-gray-400 font-medium">{t("Used to benchmark 60 Asian University requirements")}</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div>
               <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">
-                Cumulative GPA (out of 4.0)
+                {t("Cumulative GPA (out of 4.0)")}
               </label>
               <input 
                 type="text"
                 value={applicantData.gpa}
                 onChange={e => setApplicantData(prev => ({ ...prev, gpa: e.target.value }))}
-                placeholder="e.g. 3.85"
+                placeholder={t("e.g. 3.85")}
                 className="w-full bg-[#0B0E14] border border-gray-800 rounded-2xl px-4 py-3 text-sm text-white font-bold outline-none focus:border-emerald-500 transition-colors"
                 required
               />
@@ -249,39 +251,39 @@ const Profile: React.FC<Props> = ({
 
             <div>
               <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">
-                SAT / ACT Equivalent Score
+                {t("SAT / ACT Equivalent Score")}
               </label>
               <input 
                 type="text"
                 value={applicantData.sat}
                 onChange={e => setApplicantData(prev => ({ ...prev, sat: e.target.value }))}
-                placeholder="e.g. 1480 or ACT 33"
+                placeholder={t("e.g. 1480 or ACT 33")}
                 className="w-full bg-[#0B0E14] border border-gray-800 rounded-2xl px-4 py-3 text-sm text-white font-bold outline-none focus:border-emerald-500 transition-colors"
               />
             </div>
 
             <div>
               <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">
-                English Exam (IELTS / TOEFL)
+                {t("English Exam (IELTS / TOEFL)")}
               </label>
               <input 
                 type="text"
                 value={applicantData.ielts}
                 onChange={e => setApplicantData(prev => ({ ...prev, ielts: e.target.value }))}
-                placeholder="e.g. IELTS 7.5 or TOEFL 105"
+                placeholder={t("e.g. IELTS 7.5 or TOEFL 105")}
                 className="w-full bg-[#0B0E14] border border-gray-800 rounded-2xl px-4 py-3 text-sm text-white font-bold outline-none focus:border-emerald-500 transition-colors"
               />
             </div>
 
             <div>
               <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">
-                Target Major / Degree
+                {t("Target Major / Degree")}
               </label>
               <input 
                 type="text"
                 value={applicantData.major}
                 onChange={e => setApplicantData(prev => ({ ...prev, major: e.target.value }))}
-                placeholder="e.g. Computer Science"
+                placeholder={t("e.g. Computer Science")}
                 className="w-full bg-[#0B0E14] border border-gray-800 rounded-2xl px-4 py-3 text-sm text-white font-bold outline-none focus:border-emerald-500 transition-colors"
               />
             </div>
@@ -293,13 +295,13 @@ const Profile: React.FC<Props> = ({
               onClick={() => setIsEditing(false)}
               className="px-6 py-3 rounded-xl bg-gray-800 text-gray-300 hover:text-white font-bold text-xs uppercase"
             >
-              Cancel
+              {t("Cancel")}
             </button>
             <button
               type="submit"
               className="px-8 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-emerald-500/20"
             >
-              <Save size={14} /> Save Profile
+              <Save size={14} /> {t("Save Profile")}
             </button>
           </div>
         </form>
@@ -312,21 +314,21 @@ const Profile: React.FC<Props> = ({
           {/* Metrics Summary Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             <div className="bg-[#1A1F26] p-6 rounded-3xl border border-gray-800/80 shadow-lg">
-              <div className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-1">Applicant GPA</div>
+              <div className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-1">{t("Applicant GPA")}</div>
               <div className="text-3xl font-black text-emerald-400">{applicantData.gpa} <span className="text-xs text-gray-500 font-normal">/ 4.0</span></div>
-              <div className="text-[11px] text-gray-400 font-medium mt-1">Competitive for Tier-1 Asian Unis</div>
+              <div className="text-[11px] text-gray-400 font-medium mt-1">{t("Competitive for Tier-1 Asian Unis")}</div>
             </div>
 
             <div className="bg-[#1A1F26] p-6 rounded-3xl border border-gray-800/80 shadow-lg">
-              <div className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-1">Testing Benchmark</div>
+              <div className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-1">{t("Testing Benchmark")}</div>
               <div className="text-3xl font-black text-white">{applicantData.sat}</div>
-              <div className="text-[11px] text-gray-400 font-medium mt-1">SAT / ACT Profile</div>
+              <div className="text-[11px] text-gray-400 font-medium mt-1">{t("SAT / ACT Profile")}</div>
             </div>
 
             <div className="bg-[#1A1F26] p-6 rounded-3xl border border-gray-800/80 shadow-lg">
-              <div className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-1">Language Score</div>
+              <div className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-1">{t("Language Score")}</div>
               <div className="text-3xl font-black text-emerald-400">{applicantData.ielts}</div>
-              <div className="text-[11px] text-gray-400 font-medium mt-1">IELTS / TOEFL Ready</div>
+              <div className="text-[11px] text-gray-400 font-medium mt-1">{t("IELTS / TOEFL Ready")}</div>
             </div>
           </div>
 
@@ -335,12 +337,12 @@ const Profile: React.FC<Props> = ({
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-xl font-black text-white flex items-center gap-2.5">
-                  <Globe className="text-emerald-400" size={22} /> Target Asian Destinations
+                  <Globe className="text-emerald-400" size={22} /> {t("Target Asian Destinations")}
                 </h3>
-                <p className="text-xs text-gray-400 mt-1">Select the countries you are actively targeting for admissions</p>
+                <p className="text-xs text-gray-400 mt-1">{t("Select the countries you are actively targeting for admissions")}</p>
               </div>
               <span className="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                {applicantData.targetCountries.length} Selected
+                {applicantData.targetCountries.length} {t("Selected")}
               </span>
             </div>
 
@@ -358,7 +360,7 @@ const Profile: React.FC<Props> = ({
                     }`}
                   >
                     <span>{country.flag}</span>
-                    <span>{country.name}</span>
+                    <span>{t(country.name)}</span>
                   </button>
                 );
               })}
@@ -369,11 +371,11 @@ const Profile: React.FC<Props> = ({
           <div className="bg-gradient-to-r from-emerald-950/40 via-[#1A1F26] to-[#1A1F26] p-8 rounded-[2.5rem] border border-emerald-500/30 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
             <div className="space-y-1">
               <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400 bg-emerald-400/10 px-2.5 py-0.5 rounded-full border border-emerald-400/20">
-                Admissions Strategy
+                {t("Admissions Strategy")}
               </span>
-              <h4 className="text-lg font-black text-white mt-1">Ready to Draft Your Statement of Purpose?</h4>
+              <h4 className="text-lg font-black text-white mt-1">{t("Ready to Draft Your Statement of Purpose?")}</h4>
               <p className="text-xs text-gray-400 font-medium">
-                Benchmark your essay against real successful international applicant essays with Bagdar Essay AI.
+                {t("Benchmark your essay against real successful international applicant essays with Bagdar Essay AI.")}
               </p>
             </div>
             {onNavigate && (
@@ -381,7 +383,7 @@ const Profile: React.FC<Props> = ({
                 onClick={() => onNavigate('essay-ai')}
                 className="px-6 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs uppercase tracking-wider rounded-2xl transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2 shrink-0"
               >
-                Launch Essay AI <ArrowRight size={14} />
+                {t("Launch Essay AI")} <ArrowRight size={14} />
               </button>
             )}
           </div>
@@ -393,13 +395,13 @@ const Profile: React.FC<Props> = ({
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-xl font-black text-white flex items-center gap-2.5">
-                  <FileText className="text-emerald-400" size={22} /> Admissions Dossier
+                  <FileText className="text-emerald-400" size={22} /> {t("Admissions Dossier")}
                 </h3>
-                <p className="text-xs text-gray-400 mt-1">Checklist for 2026/2027 intake portals</p>
+                <p className="text-xs text-gray-400 mt-1">{t("Checklist for 2026/2027 intake portals")}</p>
               </div>
               <div className="text-right">
                 <div className="text-2xl font-black text-emerald-400">{readinessPercentage}%</div>
-                <div className="text-[9px] font-black uppercase tracking-wider text-gray-500">Readiness</div>
+                <div className="text-[9px] font-black uppercase tracking-wider text-gray-500">{t("Readiness")}</div>
               </div>
             </div>
 
@@ -434,10 +436,10 @@ const Profile: React.FC<Props> = ({
                     </div>
                     <div className="flex-1">
                       <div className={`text-xs font-bold ${isChecked ? 'text-gray-200 line-through opacity-80' : 'text-gray-300'}`}>
-                        {item.label}
+                        {t(item.label)}
                       </div>
                       <div className="text-[10px] text-gray-500 mt-0.5 font-medium">
-                        {item.desc}
+                        {t(item.desc)}
                       </div>
                     </div>
                   </div>
@@ -451,12 +453,12 @@ const Profile: React.FC<Props> = ({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <Cpu size={18} className="text-emerald-400" />
-                <span className="text-xs font-black uppercase tracking-wider text-white">AI Engine Infrastructure</span>
+                <span className="text-xs font-black uppercase tracking-wider text-white">{t("AI Engine Infrastructure")}</span>
               </div>
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10B981]" />
             </div>
             <p className="text-xs text-gray-400 leading-relaxed font-medium">
-              Connected to source-linked admissions research and Google Maps location tools for campus planning and application support.
+              {t("Connected to source-linked admissions research and Google Maps location tools for campus planning and application support.")}
             </p>
           </div>
         </div>

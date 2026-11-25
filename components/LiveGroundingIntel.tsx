@@ -1,3 +1,4 @@
+import { useLocale } from "../i18n/locale";
 import React, { useState, useEffect } from 'react';
 import { Search, MapPin, Globe, ExternalLink, Sparkles, Navigation, Loader2, BookOpen, AlertCircle, Compass, CheckCircle2, ChevronRight, Layers, RefreshCw } from 'lucide-react';
 import { groundingService, UNIVERSITY_COORDINATES } from '../services/groundingService';
@@ -17,6 +18,7 @@ export const LiveGroundingIntel: React.FC<Props> = ({
   onSelectUniversity,
   compact = false
 }) => {
+  const { t, locale } = useLocale();
   const [mode, setMode] = useState<'search' | 'maps'>(initialMode);
   const [selectedUni, setSelectedUni] = useState<University | undefined>(initialUniversity);
   const [query, setQuery] = useState('');
@@ -47,7 +49,7 @@ export const LiveGroundingIntel: React.FC<Props> = ({
   // Geolocation detector
   const handleDetectLocation = () => {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser.");
+      alert(t('Geolocation is not supported by your browser.'));
       return;
     }
     setLocating(true);
@@ -75,6 +77,7 @@ export const LiveGroundingIntel: React.FC<Props> = ({
     try {
       if (mode === 'search') {
         const res = await groundingService.fetchSearchGroundedData(activePrompt, {
+          locale,
           universityName: selectedUni?.name,
           location: selectedUni?.location
         });
@@ -82,6 +85,7 @@ export const LiveGroundingIntel: React.FC<Props> = ({
       } else {
         const res = await groundingService.fetchMapsGroundedData(activePrompt, {
           universityId: selectedUni?.id,
+          locale,
           universityName: selectedUni?.name,
           location: selectedUni?.location,
           userCoordinates: userLocation || undefined
@@ -110,25 +114,25 @@ export const LiveGroundingIntel: React.FC<Props> = ({
         <div>
           <div className="flex items-center gap-3">
             <span className="px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
-              <Sparkles size={14} /> Grounded AI Engine
+              <Sparkles size={14} /> {t("Grounded AI Engine")}
             </span>
             <span className="text-xs text-gray-500 font-mono">gemini-3.5-flash</span>
           </div>
           <h3 className="text-2xl md:text-3xl font-black text-white mt-2 flex items-center gap-3">
             {mode === 'search' ? (
               <>
-                <Globe className="text-blue-400" size={28} /> Google Search Grounding
+                <Globe className="text-blue-400" size={28} /> {t("Google Search Grounding")}
               </>
             ) : (
               <>
-                <MapPin className="text-emerald-400" size={28} /> Google Maps Grounding
+                <MapPin className="text-emerald-400" size={28} /> {t("Google Maps Grounding")}
               </>
             )}
           </h3>
           <p className="text-sm text-gray-400 mt-1 max-w-2xl font-medium">
             {mode === 'search'
-              ? 'Current admissions, deadlines, scholarships, and visa research with source links for independent verification.'
-              : 'Pinpoint campus spatial geography, nearest transit hubs, student dorms, and neighborhood amenities backed by Google Maps.'}
+              ? t("Current admissions, deadlines, scholarships, and visa research with source links for independent verification.")
+              : t("Pinpoint campus spatial geography, nearest transit hubs, student dorms, and neighborhood amenities backed by Google Maps.")}
           </p>
         </div>
 
@@ -142,7 +146,7 @@ export const LiveGroundingIntel: React.FC<Props> = ({
                 : 'text-gray-400 hover:text-white'
             }`}
           >
-            <Globe size={16} /> Google Search
+            <Globe size={16} /> {t("Google Search")}
           </button>
           <button
             onClick={() => { setMode('maps'); setResult(null); }}
@@ -161,7 +165,7 @@ export const LiveGroundingIntel: React.FC<Props> = ({
       <div className="pt-8 pb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="md:col-span-2">
           <label className="text-[11px] font-black uppercase tracking-wider text-gray-400 block mb-2">
-            Target University Focus
+            {t("Target University Focus")}
           </label>
           <select
             value={selectedUni?.id || ''}
@@ -172,10 +176,10 @@ export const LiveGroundingIntel: React.FC<Props> = ({
             }}
             className="w-full bg-[#0D1117] border border-gray-800 text-white rounded-2xl px-5 py-3.5 text-sm font-semibold focus:outline-none focus:border-emerald-500/50 transition-colors"
           >
-            <option value="">All Premier Asian Universities (General Inquiry)</option>
+            <option value="">{t("All Premier Asian Universities (General Inquiry)")}</option>
             {allUniversities.map((uni) => (
               <option key={uni.id} value={uni.id}>
-                {uni.name} — {uni.location} (Rank #{uni.ranking})
+                {uni.name} — {t(uni.location)} {t("(Rank #")}{uni.ranking})
               </option>
             ))}
           </select>
@@ -184,7 +188,7 @@ export const LiveGroundingIntel: React.FC<Props> = ({
         {mode === 'maps' ? (
           <div>
             <label className="text-[11px] font-black uppercase tracking-wider text-gray-400 block mb-2">
-              User Coordinates
+              {t("User Coordinates")}
             </label>
             <button
               onClick={handleDetectLocation}
@@ -197,15 +201,15 @@ export const LiveGroundingIntel: React.FC<Props> = ({
             >
               {locating ? (
                 <>
-                  <Loader2 size={16} className="animate-spin text-emerald-400" /> Detecting GPS...
+                  <Loader2 size={16} className="animate-spin text-emerald-400" /> {t("Detecting GPS...")}
                 </>
               ) : userLocation ? (
                 <>
-                  <CheckCircle2 size={16} className="text-emerald-400" /> GPS Active ({userLocation.latitude.toFixed(2)}, {userLocation.longitude.toFixed(2)})
+                  <CheckCircle2 size={16} className="text-emerald-400" /> {t("GPS Active (")}{userLocation.latitude.toFixed(2)}, {userLocation.longitude.toFixed(2)})
                 </>
               ) : (
                 <>
-                  <Navigation size={16} /> Detect My Location
+                  <Navigation size={16} /> {t("Detect My Location")}
                 </>
               )}
             </button>
@@ -213,10 +217,10 @@ export const LiveGroundingIntel: React.FC<Props> = ({
         ) : (
           <div>
             <label className="text-[11px] font-black uppercase tracking-wider text-gray-400 block mb-2">
-              Academic Cycle
+              {t("Academic Cycle")}
             </label>
             <div className="bg-[#0D1117] border border-gray-800 text-emerald-400 font-mono font-bold text-xs rounded-2xl px-5 py-3.5 flex items-center justify-between">
-              <span>2026 / 2027 Admissions</span>
+              <span>{t("2026 / 2027 Admissions")}</span>
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             </div>
           </div>
@@ -226,20 +230,20 @@ export const LiveGroundingIntel: React.FC<Props> = ({
       {/* Preset Quick Chips */}
       <div className="mb-6">
         <div className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-2.5">
-          Recommended Grounded Inquiries
+          {t("Recommended Grounded Inquiries")}
         </div>
         <div className="flex flex-wrap gap-2">
           {(mode === 'search' ? searchPresetQueries : mapsPresetQueries).map((preset, idx) => (
             <button
               key={idx}
               onClick={() => {
-                setQuery(preset.prompt);
-                executeGrounding(preset.prompt);
+                setQuery(t(preset.prompt));
+                executeGrounding(t(preset.prompt));
               }}
               className="px-4 py-2 rounded-xl bg-[#0D1117] hover:bg-[#1E2530] text-gray-300 hover:text-white border border-gray-800 hover:border-emerald-500/30 text-xs font-semibold transition-all text-left flex items-center gap-1.5"
             >
               <ChevronRight size={13} className={mode === 'search' ? 'text-blue-400' : 'text-emerald-400'} />
-              {preset.label}
+              {t(preset.label)}
             </button>
           ))}
         </div>
@@ -257,8 +261,8 @@ export const LiveGroundingIntel: React.FC<Props> = ({
           onKeyDown={(e) => e.key === 'Enter' && executeGrounding()}
           placeholder={
             mode === 'search'
-              ? `Ask anything about admissions, deadlines, or scholarships at ${selectedUni?.name || 'Asian universities'}...`
-              : `Ask about transit, dormitories, neighborhood, or facilities around ${selectedUni?.name || 'campus'}...`
+              ? t('Ask anything about admissions, deadlines, or scholarships at {name}...', { name: selectedUni?.name || t('Asian universities') })
+              : t('Ask about transit, dormitories, neighborhood, or facilities around {name}...', { name: selectedUni?.name || t('campus') })
           }
           className="w-full bg-[#0D1117] border border-gray-800 rounded-2xl py-4 pl-14 pr-36 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 transition-all"
         />
@@ -272,7 +276,7 @@ export const LiveGroundingIntel: React.FC<Props> = ({
           } disabled:opacity-50`}
         >
           {loading ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
-          <span>Scan Intel</span>
+          <span>{t("Scan Intel")}</span>
         </button>
       </div>
 
@@ -284,11 +288,11 @@ export const LiveGroundingIntel: React.FC<Props> = ({
           </div>
           <p className="text-base font-bold text-white">
             {mode === 'search'
-              ? 'Searching live web data & official university portals...'
-              : 'Querying Google Maps spatial records & campus neighborhood...'}
+              ? t("Searching live web data & official university portals...")
+              : t("Querying Google Maps spatial records & campus neighborhood...")}
           </p>
           <p className="text-xs text-gray-500 mt-1">
-            Applying Grounding via gemini-3.5-flash with {mode === 'search' ? 'googleSearch' : 'googleMaps'} tool
+            {t("Applying Grounding via gemini-3.5-flash with")} {mode === 'search' ? 'googleSearch' : 'googleMaps'} {t("tool")}
           </p>
         </div>
       )}
@@ -300,9 +304,9 @@ export const LiveGroundingIntel: React.FC<Props> = ({
             <div className="flex items-center justify-between pb-4 mb-4 border-b border-gray-800/80">
               <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-400">
                 {result.groundingType === 'search' ? (
-                  <span className="text-blue-400 flex items-center gap-1.5"><Globe size={14} /> Web Grounded Analysis</span>
+                  <span className="text-blue-400 flex items-center gap-1.5"><Globe size={14} /> {t(result.fallback ? "Live lookup unavailable" : "Web Grounded Analysis")}</span>
                 ) : (
-                  <span className="text-emerald-400 flex items-center gap-1.5"><MapPin size={14} /> Maps Grounded Analysis</span>
+                  <span className="text-emerald-400 flex items-center gap-1.5"><MapPin size={14} /> {t(result.fallback ? "Live lookup unavailable" : "Maps Grounded Analysis")}</span>
                 )}
                 <span>•</span>
                 <span className="text-gray-500">{result.timestamp}</span>
@@ -310,21 +314,21 @@ export const LiveGroundingIntel: React.FC<Props> = ({
               <button
                 onClick={() => executeGrounding()}
                 className="text-xs text-gray-400 hover:text-white flex items-center gap-1 font-semibold transition-colors"
-                title="Refresh Intel"
+                title={t("Refresh Intel")}
               >
-                <RefreshCw size={13} /> Refresh
+                <RefreshCw size={13} /> {t("Refresh")}
               </button>
             </div>
 
             {/* Markdown Body */}
             <div className="prose prose-invert max-w-none text-gray-200 text-sm leading-relaxed whitespace-pre-wrap font-normal">
-              {result.text}
+              {t(result.text)}
             </div>
 
             {/* Search Queries executed (if search) */}
             {result.searchQueries && result.searchQueries.length > 0 && (
               <div className="mt-6 pt-4 border-t border-gray-800/60 flex flex-wrap items-center gap-2">
-                <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Google Search Queries:</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">{t("Google Search Queries:")}</span>
                 {result.searchQueries.map((q, idx) => (
                   <span key={idx} className="px-2.5 py-1 rounded-lg bg-gray-800/60 text-gray-400 text-xs font-mono">
                     "{q}"
@@ -340,16 +344,16 @@ export const LiveGroundingIntel: React.FC<Props> = ({
               <h4 className="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
                 {result.groundingType === 'search' ? (
                   <>
-                    <Globe size={16} className="text-blue-400" /> Official Web Sources ({result.sources.length})
+                    <Globe size={16} className="text-blue-400" /> {t("Web Sources (")}{result.sources.length})
                   </>
                 ) : (
                   <>
-                    <MapPin size={16} className="text-emerald-400" /> Google Maps Direct Places ({result.sources.length})
+                    <MapPin size={16} className="text-emerald-400" /> {t("Google Maps Direct Places (")}{result.sources.length})
                   </>
                 )}
               </h4>
               <span className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">
-                Direct External Links
+                {t("Direct External Links")}
               </span>
             </div>
 
@@ -368,7 +372,7 @@ export const LiveGroundingIntel: React.FC<Props> = ({
                 >
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <span className="text-xs font-bold text-white group-hover:text-emerald-300 transition-colors line-clamp-2">
-                      {src.title}
+                      {t(src.title)}
                     </span>
                     <ExternalLink size={14} className="text-gray-400 group-hover:text-white shrink-0 mt-0.5" />
                   </div>
@@ -389,10 +393,10 @@ export const LiveGroundingIntel: React.FC<Props> = ({
             {mode === 'search' ? <Globe size={24} className="text-blue-400" /> : <MapPin size={24} className="text-emerald-400" />}
           </div>
           <h4 className="text-base font-bold text-white">
-            {mode === 'search' ? 'Scan Official Admissions & Deadlines' : 'Explore Campus Location & Transit'}
+            {mode === 'search' ? t("Scan Official Admissions & Deadlines") : t("Explore Campus Location & Transit")}
           </h4>
           <p className="text-xs text-gray-400 mt-1 max-w-md mx-auto">
-            Choose a recommended inquiry chip above or enter your custom question to run a grounded scan via gemini-3.5-flash.
+            {t("Choose a recommended inquiry chip above or enter your custom question to run a grounded scan via gemini-3.5-flash.")}
           </p>
         </div>
       )}

@@ -1,3 +1,5 @@
+import { ASIA_COUNTRIES } from '../constants';
+import { responseLanguage, translate, type Locale } from '../i18n/locale';
 import { GoogleGenAI } from "@google/genai";
 import { GroundingResult, GroundingSource } from "../types";
 
@@ -108,8 +110,9 @@ export class GroundingService {
    */
   async fetchSearchGroundedData(
     query: string,
-    context?: { universityName?: string; location?: string }
+    context?: { universityName?: string; location?: string; locale?: Locale }
   ): Promise<GroundingResult> {
+    const locale = context?.locale || 'en';
     const targetUni = context?.universityName || 'Asian Universities';
     const targetLoc = context?.location || 'Asia';
 
@@ -121,7 +124,7 @@ Focus on:
 3. Government & institutional scholarships (quota, coverage, deadlines, stipend details).
 4. Recent visa or post-graduation work permit policies.
 
-Formatting: Use structured Markdown with clear headings, bullet points, and highlight verified dates.`;
+Formatting: Use structured Markdown with clear headings, bullet points, and highlight verified dates. Write the answer in ${responseLanguage[locale]}.`;
 
     const userPrompt = `${systemPrompt}\n\nCandidate Question: ${query}`;
 
@@ -135,7 +138,7 @@ Formatting: Use structured Markdown with clear headings, bullet points, and high
         }
       });
 
-      const text = response.text || 'No information retrieved.';
+      const text = response.text || translate(locale, 'No information retrieved.');
       const metadata = response.candidates?.[0]?.groundingMetadata;
       const chunks = metadata?.groundingChunks || [];
       const searchQueries = metadata?.webSearchQueries || [];
@@ -159,11 +162,11 @@ Formatting: Use structured Markdown with clear headings, bullet points, and high
         sources,
         searchQueries,
         groundingType: 'search',
-        timestamp: new Date().toLocaleTimeString()
+        timestamp: new Date().toLocaleTimeString(locale)
       };
     } catch (err: any) {
       console.warn("Search Grounding API encountered an error, activating resilient grounded intelligence:", err);
-      return this.generateResilientSearchFallback(query, targetUni, targetLoc, err?.message);
+      return this.searchFallback(targetUni, locale);
     }
   }
 
@@ -174,12 +177,14 @@ Formatting: Use structured Markdown with clear headings, bullet points, and high
   async fetchMapsGroundedData(
     query: string,
     options?: {
+      locale?: Locale;
       universityId?: string;
       universityName?: string;
       location?: string;
       userCoordinates?: { latitude: number; longitude: number };
     }
   ): Promise<GroundingResult> {
+    const locale = options?.locale || 'en';
     const uniName = options?.universityName || 'Asian University Campus';
     const uniLoc = options?.location || 'Asia';
     
@@ -199,7 +204,7 @@ Focus on:
 4. Student life hubs: popular cafeterias, study libraries, grocery supermarkets, and cafes around campus.
 
 Address this specific inquiry: "${query}".
-Provide a concise, helpful Markdown breakdown.`;
+Provide a concise, helpful Markdown breakdown in ${responseLanguage[locale]}.`;
 
     try {
       const ai = this.getClient();
@@ -225,7 +230,7 @@ Provide a concise, helpful Markdown breakdown.`;
         config
       });
 
-      const text = response.text || 'No location details available.';
+      const text = response.text || translate(locale, 'No location details available.');
       const metadata = response.candidates?.[0]?.groundingMetadata;
       const chunks = metadata?.groundingChunks || [];
 
@@ -257,104 +262,41 @@ Provide a concise, helpful Markdown breakdown.`;
         text,
         sources,
         groundingType: 'maps',
-        timestamp: new Date().toLocaleTimeString()
+        timestamp: new Date().toLocaleTimeString(locale)
       };
     } catch (err: any) {
       console.warn("Maps Grounding API encountered an error, activating resilient maps intelligence:", err);
-      return this.generateResilientMapsFallback(query, uniName, uniLoc, options?.universityId, err?.message);
+      return this.mapsFallback(uniName, uniLoc, locale);
     }
   }
 
-  private generateResilientSearchFallback(
-    query: string,
-    uniName: string,
-    location: string,
-    errorMsg?: string
-  ): GroundingResult {
-    const isQuota = errorMsg?.includes('429') || errorMsg?.includes('RESOURCE_EXHAUSTED') || errorMsg?.includes('quota');
-    const note = isQuota
-      ? '> ⚠️ **Live Search Quota Notice:** Connected to Bagdar verified admissions database. Add a billing-enabled key in Settings > Secrets for unlimited live web scans.'
-      : '';
-
-    const text = `${note ? note + '\n\n' : ''}### Verified Admission Intelligence: ${uniName} (${location})
-
-**Current Cycle Overview (2026/2027 Academic Year):**
-- **Undergraduate Intakes:** Main Fall intake applications typically open from **October to January**, with secondary rounds concluding in **March/April**.
-- **Graduate & Research Cycles:** Spring semester deadlines range from **September to November**; Fall admissions run from **December to March**.
-- **Standardized Credentials:** 
-  - English Language: IELTS minimum 6.5–7.0 / TOEFL iBT 90–100.
-  - Academic Testing: SAT 1420–1540+ for international STEM cohorts, or national olympiad / top 5% class standing.
-- **Priority Government Funding:** 
-  - National scholarship programs (such as CSC in China, GKS in South Korea, MEXT in Japan, Bolashaq/Government grants in Kazakhstan, and ASEAN awards in Singapore/Malaysia) grant full tuition remission alongside monthly living allowances ($600–$1,800/mo).
-
-*Query evaluated:* "${query}"`;
-
-    const sources: GroundingSource[] = [
-      {
-        title: `${uniName} Official International Admissions Portal`,
-        uri: `https://www.google.com/search?q=${encodeURIComponent(uniName + ' international student admissions deadlines 2026')}`,
-        type: 'web'
-      },
-      {
-        title: `Official Ministry of Education Scholarship Guidelines (${location})`,
-        uri: `https://www.google.com/search?q=${encodeURIComponent('international student government scholarships ' + location + ' 2026')}`,
-        type: 'web'
-      },
-      {
-        title: `${uniName} Academic Calendar & Prospectus`,
-        uri: `https://www.google.com/search?q=${encodeURIComponent(uniName + ' academic calendar requirements fees')}`,
-        type: 'web'
-      }
-    ];
-
+  private searchFallback(name: string, locale: Locale): GroundingResult {
+    const university = ASIA_COUNTRIES.flatMap(country => country.universities).find(item => item.name === name);
     return {
-      text,
-      sources,
-      searchQueries: [`${uniName} admissions 2026`, `${location} student visa policies`],
+      text: translate(locale, 'Live search is unavailable. Check current admissions information on the university’s official website.'),
+      sources: university ? [{ title: translate(locale, 'Official Portal'), uri: university.website, type: 'web' }] : [],
       groundingType: 'search',
-      timestamp: new Date().toLocaleTimeString()
+      timestamp: new Date().toLocaleTimeString(locale),
+      fallback: true,
     };
   }
 
-  private generateResilientMapsFallback(
-    query: string,
-    uniName: string,
-    location: string,
-    uniId?: string,
-    errorMsg?: string
-  ): GroundingResult {
-    const coords = uniId && UNIVERSITY_COORDINATES[uniId] ? UNIVERSITY_COORDINATES[uniId] : null;
-    const isQuota = errorMsg?.includes('429') || errorMsg?.includes('RESOURCE_EXHAUSTED') || errorMsg?.includes('quota');
-    const note = isQuota
-      ? '> 📍 **Live Maps Quota Notice:** Location data rendered using Bagdar verified spatial coordinates. Configure a billing-enabled key in Settings > Secrets for direct satellite retrieval.'
-      : '';
-
-    const text = `${note ? note + '\n\n' : ''}### Campus & Neighborhood Coordinates: ${uniName}
-
-**Spatial & Transit Guide:**
-- **Campus District:** Situated in ${coords ? coords.city : location}, featuring centralized academic clusters, research laboratories, and pedestrian green corridors.
-- **Rapid Transit:** Connected via municipal rapid transit and feeder bus loops with direct links to the central business district and international terminals.
-- **Residential Living:**
-  - *On-Campus Dorms:* Subsidized residence halls equipped with high-speed fiber internet, study commons, and 24/7 security.
-  - *Off-Campus Neighborhoods:* High-density student residential zones within 10–25 minutes via light rail.
-- **Student Amenity Zone:** Immediate perimeter houses 24/7 convenience marts, international dining options, and quiet study cafes.
-
-*Spatial inquiry:* "${query}"`;
-
+  private mapsFallback(uniName: string, location: string, locale: Locale): GroundingResult {
+    const text = translate(locale, 'Live Maps results are unavailable. Use the links below to check the campus, housing, and transit near {name}.', { name: translate(locale, uniName) });
     const mapSearchQuery = encodeURIComponent(`${uniName} ${location}`);
     const sources: GroundingSource[] = [
       {
-        title: `${uniName} Campus on Google Maps`,
+        title: translate(locale, '{name} Campus on Google Maps', { name: uniName }),
         uri: `https://www.google.com/maps/search/?api=1&query=${mapSearchQuery}`,
         type: 'maps'
       },
       {
-        title: `Student Housing & Dormitories near ${uniName}`,
+        title: translate(locale, 'Student Housing & Dormitories near {name}', { name: uniName }),
         uri: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent('student dorms apartments near ' + uniName)}`,
         type: 'maps'
       },
       {
-        title: `Transit & Metro Stations near ${uniName}`,
+        title: translate(locale, 'Transit & Metro Stations near {name}', { name: uniName }),
         uri: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent('transit metro station near ' + uniName)}`,
         type: 'maps'
       }
@@ -364,7 +306,8 @@ Provide a concise, helpful Markdown breakdown.`;
       text,
       sources,
       groundingType: 'maps',
-      timestamp: new Date().toLocaleTimeString()
+      timestamp: new Date().toLocaleTimeString(locale),
+      fallback: true,
     };
   }
 }

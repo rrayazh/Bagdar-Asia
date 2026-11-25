@@ -96,6 +96,7 @@ export interface GroundingSource {
 }
 
 export interface GroundingResult {
+  fallback?: boolean;
   text: string;
   sources: GroundingSource[];
   searchQueries?: string[];

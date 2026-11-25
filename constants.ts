@@ -139,17 +139,10 @@ export const ASIA_COUNTRIES: Country[] = [
   ]}
 ];
 
-// Helper to set dates relative to now so the timer is always active for demo purposes
-const now = new Date();
-const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 15);
-const twoMonths = new Date(now.getFullYear(), now.getMonth() + 2, 20);
-const threeMonths = new Date(now.getFullYear(), now.getMonth() + 3, 5);
-
+// Exact closing times published by the university (Astana time).
 export const UPCOMING_DEADLINES: Deadline[] = [
-  { id: '1', universityName: 'Seoul National University', countryFlag: '🇰🇷', date: nextMonth.toISOString(), label: 'Spring Intake 2026', website: 'https://en.snu.ac.kr/' },
-  { id: '2', universityName: 'National University of Singapore', countryFlag: '🇸🇬', date: twoMonths.toISOString(), label: 'Regular Decision', website: 'https://www.nus.edu.sg/' },
-  { id: '3', universityName: 'Tsinghua University', countryFlag: '🇨🇳', date: threeMonths.toISOString(), label: 'Global Admissions', website: 'https://www.tsinghua.edu.cn/en/' },
-  { id: '4', universityName: 'Nazarbayev University', countryFlag: '🇰🇿', date: new Date(now.getFullYear() + 1, 3, 1).toISOString(), label: 'Early Admission', website: 'https://nu.edu.kz/' },
-  { id: '5', universityName: 'University of Tokyo', countryFlag: '🇯🇵', date: new Date(now.getFullYear(), 11, 1).toISOString(), label: 'Winter Intake', website: 'https://www.u-tokyo.ac.jp/en/' },
-  { id: '6', universityName: 'NYU Abu Dhabi', countryFlag: '🇦🇪', date: new Date(now.getFullYear(), 10, 15).toISOString(), label: 'Early Decision I', website: 'https://nyuad.nyu.edu/en/' }
+  { id: 'nu-2026-midyear-application', universityName: 'Nazarbayev University', countryFlag: '🇰🇿', date: '2026-11-28T14:00:00+05:00', label: '2026/27 mid-year application (fee-paying)', website: 'https://nu.edu.kz/admissions/how-to-apply/foundation-undergraduate/regular-admissions/' },
+  { id: 'nu-2026-midyear-test-results', universityName: 'Nazarbayev University', countryFlag: '🇰🇿', date: '2026-11-28T23:59:00+05:00', label: '2026/27 mid-year test results', website: 'https://nu.edu.kz/admissions/how-to-apply/foundation-undergraduate/regular-admissions/' },
+  { id: 'nu-2027-nuet-financial-support', universityName: 'Nazarbayev University', countryFlag: '🇰🇿', date: '2026-12-11T14:00:00+05:00', label: '2027/28 financial support: NUET applicants', website: 'https://nu.edu.kz/admissions/how-to-apply/foundation-undergraduate/financial-aid-end-scholarships/' },
+  { id: 'nu-2027-other-financial-support', universityName: 'Nazarbayev University', countryFlag: '🇰🇿', date: '2027-01-28T14:00:00+05:00', label: '2027/28 financial support: other eligible categories', website: 'https://nu.edu.kz/admissions/how-to-apply/foundation-undergraduate/financial-aid-end-scholarships/' },
 ];

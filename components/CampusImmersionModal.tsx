@@ -1,3 +1,4 @@
+import { useLocale } from "../i18n/locale";
 import React, { useState, useEffect, useRef } from 'react';
 import { University } from '../types';
 import { UNIVERSITY_COORDINATES } from '../services/groundingService';
@@ -51,6 +52,7 @@ interface CampusScene {
 }
 
 export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, university }) => {
+  const { t, locale } = useLocale();
   const [activeSceneIndex, setActiveSceneIndex] = useState(0);
   const [timeMode, setTimeMode] = useState<'day' | 'night'>('day');
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
@@ -72,12 +74,12 @@ export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, univers
   const scenes: CampusScene[] = [
     {
       id: 'main-gate',
-      name: `${university.name} Grand Entrance & Plaza`,
+      name: t('{name} Grand Entrance & Plaza', { name: university.name }),
       tag: 'Campus Landmark',
       icon: Building,
       panQuery: 'main gate entrance plaza',
-      narrativeDay: `Welcome to ${university.name} in ${university.location}! You are currently standing at the iconic campus grand gate. In front of you, wide pedestrian boulevards stretch toward the academic core. International students and researchers from across the globe gather here each morning, with campus shuttle buses and rapid metro stations just a 3-minute stroll away.`,
-      narrativeNight: `As dusk settles over ${university.location}, the grand entrance of ${university.name} lights up with ambient architectural illumination. Students gather around the central fountain after evening seminars, heading to nearby lively student bistros and metro connections.`,
+      narrativeDay: locale === 'en' ? `Welcome to ${university.name} in ${t(university.location)}! You are currently standing at the iconic campus grand gate. In front of you, wide pedestrian boulevards stretch toward the academic core. International students and researchers from across the globe gather here each morning, with campus shuttle buses and rapid metro stations just a 3-minute stroll away.` : t('campus-gate-day', { name: university.name, location: t(university.location) }),
+      narrativeNight: locale === 'en' ? `As dusk settles over ${t(university.location)}, the grand entrance of ${university.name} lights up with ambient architectural illumination. Students gather around the central fountain after evening seminars, heading to nearby lively student bistros and metro connections.` : t('campus-gate-night', { name: university.name, location: t(university.location) }),
       hotspots: [
         { x: 28, y: 45, label: 'Central University Shuttle Stop', description: 'Free eco-friendly student shuttles looping across campus every 6 minutes.', type: 'transit' },
         { x: 50, y: 35, label: 'Honor Monument & Ceremonial Gate', description: 'Historic landmark where incoming freshmen take graduation and induction photos.', type: 'study' },
@@ -90,8 +92,8 @@ export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, univers
       tag: 'Academic Core',
       icon: BookOpen,
       panQuery: 'central university library study commons',
-      narrativeDay: `Step inside the heart of ${university.name}'s academic horsepower: the Central Research Library. Equipped with over five million physical volumes, gigabit research workstations, and silent glass study pods. You can hear the quiet concentration of ambitious minds working on patents, global economics, and cutting-edge publications.`,
-      narrativeNight: `At 10:00 PM, the 24/7 designated study wings remain alive with focused energy. Warm desk lamps glow across multiple floors as study groups whiteboard ideas for international hackathons and upcoming midterm defense presentations.`,
+      narrativeDay: locale === 'en' ? `Step inside the heart of ${university.name}'s academic horsepower: the Central Research Library. Equipped with over five million physical volumes, gigabit research workstations, and silent glass study pods. You can hear the quiet concentration of ambitious minds working on patents, global economics, and cutting-edge publications.` : t('campus-library-day', { name: university.name, location: t(university.location) }),
+      narrativeNight: locale === 'en' ? `At 10:00 PM, the 24/7 designated study wings remain alive with focused energy. Warm desk lamps glow across multiple floors as study groups whiteboard ideas for international hackathons and upcoming midterm defense presentations.` : t('campus-library-night', { name: university.name, location: t(university.location) }),
       hotspots: [
         { x: 35, y: 40, label: '24/7 Global Study Pods', description: 'Ergonomic pods with noise cancellation and high-speed research intranet access.', type: 'study' },
         { x: 62, y: 32, label: 'Special Collections & Archives', description: 'Rare manuscripts and government research repositories.', type: 'study' },
@@ -104,8 +106,8 @@ export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, univers
       tag: 'Student Life',
       icon: Coffee,
       panQuery: 'student union food court plaza',
-      narrativeDay: `Here in the Student Union and Global Canteen, the aroma of fresh noodles, rice bowls, and artisan coffee fills the air. With halal-certified counters, vegetarian selections, and regional street foods priced at only 3 to 6 dollars, it is the social crossroads of campus.`,
-      narrativeNight: `Night brings this district alive! Campus musical clubs rehearse on open lawns, language-exchange tables chat in multilingual harmony, and late-night convenience marts serve fresh snacks to students returning from the labs.`,
+      narrativeDay: locale === 'en' ? `Here in the Student Union and Global Canteen, the aroma of fresh noodles, rice bowls, and artisan coffee fills the air. With halal-certified counters, vegetarian selections, and regional street foods priced at only 3 to 6 dollars, it is the social crossroads of campus.` : t('campus-hub-day', { name: university.name, location: t(university.location) }),
+      narrativeNight: locale === 'en' ? `Night brings this district alive! Campus musical clubs rehearse on open lawns, language-exchange tables chat in multilingual harmony, and late-night convenience marts serve fresh snacks to students returning from the labs.` : t('campus-hub-night', { name: university.name, location: t(university.location) }),
       hotspots: [
         { x: 25, y: 55, label: 'Halal & International Food Hall', description: 'Six dedicated counters offering verified Halal, Vegetarian, and pan-Asian dishes.', type: 'food' },
         { x: 52, y: 42, label: 'Student Union Amphitheatre', description: 'Host of annual cultural festivals, university TEDx talks, and robotics showcases.', type: 'study' },
@@ -118,8 +120,8 @@ export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, univers
       tag: 'Residential Life',
       icon: Home,
       panQuery: 'international student dormitories residence hall',
-      narrativeDay: `Welcome to the International Residence Quad. Modern twin and single suites feature private fiber-optic internet, floor kitchens, fitness centers, and panoramic mountain or skyline views. Living on campus places you only a 7-minute walk from any morning lecture.`,
-      narrativeNight: `Inside the dorm common lounge, students from 40 different countries are cooking dinner together, studying collaborative problem sets, and planning weekend excursions around ${university.location}.`,
+      narrativeDay: locale === 'en' ? `Welcome to the International Residence Quad. Modern twin and single suites feature private fiber-optic internet, floor kitchens, fitness centers, and panoramic mountain or skyline views. Living on campus places you only a 7-minute walk from any morning lecture.` : t('campus-residence-day', { name: university.name, location: t(university.location) }),
+      narrativeNight: locale === 'en' ? `Inside the dorm common lounge, students from 40 different countries are cooking dinner together, studying collaborative problem sets, and planning weekend excursions around ${t(university.location)}.` : t('campus-residence-night', { name: university.name, location: t(university.location) }),
       hotspots: [
         { x: 30, y: 48, label: 'Global Resident Lounge & Kitchen', description: 'Fully equipped shared culinary hub for cultural dinners and social mixers.', type: 'dorm' },
         { x: 60, y: 38, label: 'Student Health & Wellness Studio', description: 'Free gym, yoga studio, and peer counseling rooms inside residence hall.', type: 'study' },
@@ -159,6 +161,7 @@ export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, univers
       setAudioTranscript(currentNarrative);
       campusAudio.startAmbientAtmosphere(timeMode);
       campusAudio.speak(currentNarrative, {
+        language: locale,
         rate: speechRate,
         pitch: 1.0,
         onEnd: () => {
@@ -181,6 +184,7 @@ export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, univers
       const newNarrative = timeMode === 'day' ? scenes[index].narrativeDay : scenes[index].narrativeNight;
       setAudioTranscript(newNarrative);
       campusAudio.speak(newNarrative, {
+        language: locale,
         rate: speechRate,
         onEnd: () => {
           setIsPlayingAudio(false);
@@ -205,7 +209,7 @@ export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, univers
 
   // Google Maps interactive embed URI
   const googleMapsEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(
-    `${university.name} ${activeScene.panQuery} ${university.location}`
+    `${university.name} ${activeScene.panQuery} ${t(university.location)}`
   )}&t=${timeMode === 'night' ? 'k' : 'm'}&z=17&output=embed`;
 
   // External direct 360 link
@@ -223,10 +227,10 @@ export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, univers
         <div className="px-6 py-4 bg-[#161B22]/90 backdrop-blur-xl border-b border-gray-800 flex items-center justify-between gap-4 z-20">
           <div className="flex items-center gap-3">
             <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
-              <Sparkles size={14} /> Interactive Campus Location
+              <Sparkles size={14} /> {t("Interactive Campus Location")}
             </span>
             <div className="hidden sm:block text-xs font-bold text-gray-300 truncate max-w-xs md:max-w-md">
-              {university.name} • {university.location}
+              {university.name} • {t(university.location)}
             </div>
           </div>
 
@@ -246,9 +250,9 @@ export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, univers
                     ? 'bg-amber-400 text-black shadow-md shadow-amber-400/20'
                     : 'text-gray-400 hover:text-white'
                 }`}
-                title="Daytime Campus Sunlight"
+                title={t("Daytime Campus Sunlight")}
               >
-                <Sun size={14} /> Day
+                <Sun size={14} /> {t("Day")}
               </button>
               <button
                 onClick={() => {
@@ -263,9 +267,9 @@ export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, univers
                     ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                     : 'text-gray-400 hover:text-white'
                 }`}
-                title="Night Student Life Lighting"
+                title={t("Night Student Life Lighting")}
               >
-                <Moon size={14} /> Night
+                <Moon size={14} /> {t("Night")}
               </button>
             </div>
 
@@ -278,14 +282,14 @@ export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, univers
                   : 'bg-[#161B22] border-gray-800 text-gray-300 hover:border-gray-600'
               }`}
             >
-              <Layers size={14} /> {isStreetViewMode ? 'Maps Street View' : 'Campus Location View'}
+              <Layers size={14} /> {isStreetViewMode ? t("Maps Street View") : t("Campus Location View")}
             </button>
 
             {/* Fullscreen Button */}
             <button
               onClick={toggleFullscreen}
               className="p-2.5 rounded-2xl bg-[#161B22] border border-gray-800 text-gray-300 hover:text-white transition-colors hidden sm:flex items-center justify-center"
-              title="Toggle Fullscreen"
+              title={t("Toggle Fullscreen")}
             >
               {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
             </button>
@@ -294,7 +298,7 @@ export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, univers
             <button
               onClick={onClose}
               className="p-2.5 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center"
-              title="Exit Campus Immersion"
+              title={t("Exit Campus Immersion")}
             >
               <X size={18} />
             </button>
@@ -307,7 +311,7 @@ export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, univers
           {isStreetViewMode ? (
             <div className="w-full h-full relative">
               <iframe
-                title="Google Maps Street View"
+                title={t("Google Maps Street View")}
                 src={googleMapsEmbedUrl}
                 className="w-full h-full border-0"
                 allowFullScreen
@@ -320,7 +324,7 @@ export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, univers
                   rel="noopener noreferrer"
                   className="px-4 py-2 bg-[#0B0E14]/90 backdrop-blur-md border border-white/20 text-white rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 hover:bg-white/20 transition-all shadow-xl"
                 >
-                  Open in Google Maps <ExternalLink size={13} />
+                  {t("Open in Google Maps")} <ExternalLink size={13} />
                 </a>
               </div>
             </div>
@@ -367,7 +371,7 @@ export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, univers
 
                   {/* Hotspot Floating Label */}
                   <div className="mt-2 px-3 py-1 rounded-xl bg-[#0D1117]/90 backdrop-blur-md border border-gray-800 text-white text-[11px] font-black uppercase tracking-wider whitespace-nowrap shadow-xl flex items-center gap-1 group-hover:border-emerald-500/50 transition-colors">
-                    {hotspot.label}
+                    {t(hotspot.label)}
                   </div>
 
                   {/* Hotspot Detailed Popover Card */}
@@ -378,7 +382,7 @@ export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, univers
                     >
                       <div className="flex items-center justify-between pb-2 border-b border-gray-800">
                         <span className="text-[10px] font-black uppercase text-emerald-400 tracking-wider">
-                          {hotspot.type} Intel
+                          {t(hotspot.type)} {t("Intel")}
                         </span>
                         <button
                           onClick={() => setActiveHotspot(null)}
@@ -387,9 +391,9 @@ export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, univers
                           <X size={12} />
                         </button>
                       </div>
-                      <h5 className="text-xs font-bold text-white mt-2">{hotspot.label}</h5>
+                      <h5 className="text-xs font-bold text-white mt-2">{t(hotspot.label)}</h5>
                       <p className="text-[11px] text-gray-300 mt-1 leading-relaxed font-medium">
-                        {hotspot.description}
+                        {t(hotspot.description)}
                       </p>
                     </div>
                   )}
@@ -401,15 +405,15 @@ export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, univers
                 <div className="p-4 rounded-2xl bg-[#0B0E14]/85 backdrop-blur-xl border border-gray-800/80 shadow-2xl">
                   <div className="flex items-center gap-2">
                     <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-widest">
-                      {activeScene.tag}
+                      {t(activeScene.tag)}
                     </span>
                     <span className="text-[10px] font-mono text-gray-400">
-                      {coords.city} • Lat {coords.lat.toFixed(2)}°
+                      {t(coords.city)} {t("• Lat")} {coords.lat.toFixed(2)}°
                     </span>
                   </div>
-                  <h4 className="text-base font-black text-white mt-1">{activeScene.name}</h4>
+                  <h4 className="text-base font-black text-white mt-1">{t(activeScene.name)}</h4>
                   <p className="text-xs text-gray-400 mt-1 line-clamp-2">
-                    {timeMode === 'day' ? 'Bright daytime lighting' : 'Vibrant student night vibes'} • Tap pulsing pins for facility tips.
+                    {timeMode === 'day' ? t("Bright daytime lighting") : t("Vibrant student night vibes")} {t("• Tap pulsing pins for facility tips.")}
                   </p>
                 </div>
               </div>
@@ -424,8 +428,8 @@ export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, univers
                         <Volume2 size={16} />
                       </div>
                       <div>
-                        <div className="text-xs font-black text-white uppercase tracking-wider">AI Campus Audio Tour</div>
-                        <div className="text-[10px] text-gray-400">Voice Narrative • Ambient Engine</div>
+                        <div className="text-xs font-black text-white uppercase tracking-wider">{t("AI Campus Audio Tour")}</div>
+                        <div className="text-[10px] text-gray-400">{t("Voice Narrative • Ambient Engine")}</div>
                       </div>
                     </div>
 
@@ -439,11 +443,11 @@ export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, univers
                     >
                       {isPlayingAudio ? (
                         <>
-                          <Pause size={14} /> Stop
+                          <Pause size={14} /> {t("Stop")}
                         </>
                       ) : (
                         <>
-                          <Play size={14} /> Start Tour
+                          <Play size={14} /> {t("Start Tour")}
                         </>
                       )}
                     </button>
@@ -482,7 +486,7 @@ export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, univers
         <div className="px-6 py-4 bg-[#161B22]/95 backdrop-blur-xl border-t border-gray-800 flex items-center justify-between gap-4 overflow-x-auto z-20">
           <div className="flex items-center gap-3">
             <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest hidden md:inline">
-              Campus Zones:
+              {t("Campus Zones:")}
             </span>
             <div className="flex items-center gap-2">
               {scenes.map((scene, idx) => {
@@ -499,7 +503,7 @@ export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, univers
                     }`}
                   >
                     <IconComponent size={14} />
-                    <span>{scene.tag}</span>
+                    <span>{t(scene.tag)}</span>
                   </button>
                 );
               })}
@@ -513,7 +517,7 @@ export const CampusImmersionModal: React.FC<Props> = ({ isOpen, onClose, univers
               rel="noopener noreferrer"
               className="text-xs text-gray-400 hover:text-emerald-400 font-bold flex items-center gap-1 transition-colors"
             >
-              <span>Explore Street View Full Screen</span>
+              <span>{t("Explore Street View Full Screen")}</span>
               <ExternalLink size={12} />
             </a>
           </div>

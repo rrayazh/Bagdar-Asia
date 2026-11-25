@@ -1,3 +1,5 @@
+import { localizeCost } from '../i18n/university';
+import { useLocale } from "../i18n/locale";
 import React, { useState } from 'react';
 import { University } from '../types';
 import { UNIVERSITY_COORDINATES } from '../services/groundingService';
@@ -38,6 +40,7 @@ interface Amenity {
 }
 
 export const CampusInfrastructureRadar: React.FC<Props> = ({ university }) => {
+  const { t, locale } = useLocale();
   const [activeCategory, setActiveCategory] = useState<'all' | 'transit' | 'housing' | 'dining' | 'health'>('all');
   const [selectedAmenity, setSelectedAmenity] = useState<Amenity | null>(null);
 
@@ -51,7 +54,7 @@ export const CampusInfrastructureRadar: React.FC<Props> = ({ university }) => {
   const amenities: Amenity[] = [
     {
       id: 'metro-main',
-      name: `${university.location.split(',')[0]} University Metro Station`,
+      name: t('{city} University Metro Station', { city: t(university.location.split(',')[0]) }),
       category: 'transit',
       distanceMeters: 380,
       walkMinutes: 4,
@@ -162,15 +165,15 @@ export const CampusInfrastructureRadar: React.FC<Props> = ({ university }) => {
         <div>
           <div className="flex items-center gap-2">
             <span className="px-3.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
-              <Compass size={14} /> Live Maps Infrastructure Radar
+              <Compass size={14} /> {t("Live Maps Infrastructure Radar")}
             </span>
-            <span className="text-xs text-gray-500 font-mono">1.2km Perimeter Scan</span>
+            <span className="text-xs text-gray-500 font-mono">{t("1.2km Perimeter Scan")}</span>
           </div>
           <h3 className="text-2xl md:text-3xl font-black text-white mt-2 flex items-center gap-3">
-            Campus Infrastructure & Spatial Radar
+            {t("Campus Infrastructure & Spatial Radar")}
           </h3>
           <p className="text-sm text-gray-400 mt-1 max-w-2xl font-medium">
-            Explore nearby metro lines, dorm housing, dining, and health services around {university.name}; confirm details on the linked map before planning.
+            {t("Explore nearby metro lines, dorm housing, dining, and health services around")} {university.name}{t("; confirm details on the linked map before planning.")}
           </p>
         </div>
 
@@ -181,7 +184,7 @@ export const CampusInfrastructureRadar: React.FC<Props> = ({ university }) => {
           rel="noopener noreferrer"
           className="shrink-0 px-5 py-3 rounded-2xl bg-[#0D1117] border border-gray-800 hover:border-gray-700 text-gray-300 hover:text-white text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all shadow-md"
         >
-          <MapPin size={14} className="text-emerald-400" /> Explore on Google Maps <ExternalLink size={13} />
+          <MapPin size={14} className="text-emerald-400" /> {t("Explore on Google Maps")} <ExternalLink size={13} />
         </a>
       </div>
 
@@ -210,7 +213,7 @@ export const CampusInfrastructureRadar: React.FC<Props> = ({ university }) => {
               }`}
             >
               <Icon size={14} />
-              <span>{tab.label}</span>
+              <span>{t(tab.label)}</span>
             </button>
           );
         })}
@@ -273,7 +276,7 @@ export const CampusInfrastructureRadar: React.FC<Props> = ({ university }) => {
                       ? 'bg-amber-500 text-white hover:scale-125'
                       : 'bg-emerald-500 text-white hover:scale-125'
                   }`}
-                  title={`${amenity.name} (${amenity.distanceMeters}m)`}
+                  title={`${t(amenity.name)} (${amenity.distanceMeters} ${(locale === 'en' ? 'm' : 'м')})`}
                 >
                   <span className="w-2 h-2 rounded-full bg-white" />
                 </button>
@@ -283,8 +286,8 @@ export const CampusInfrastructureRadar: React.FC<Props> = ({ university }) => {
 
           {/* Sonar Distance Legend */}
           <div className="flex items-center justify-between w-full mt-4 px-4 text-[10px] font-mono text-gray-500">
-            <span>Center: Campus Core</span>
-            <span>Outer Ring: 1,000m</span>
+            <span>{t("Illustrative campus layout")}</span>
+            <span>{t("Outer Ring: 1,000m")}</span>
           </div>
         </div>
 
@@ -295,17 +298,17 @@ export const CampusInfrastructureRadar: React.FC<Props> = ({ university }) => {
             <div className="p-6 bg-gradient-to-r from-blue-950/40 to-[#0D1117] rounded-3xl border border-blue-500/40 shadow-xl mb-4 animate-in fade-in duration-200">
               <div className="flex items-center justify-between">
                 <span className="px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-wider">
-                  Target Amenity Spotlight
+                  {t("Target Amenity Spotlight")}
                 </span>
                 <span className="text-xs font-mono font-bold text-emerald-400">
-                  {selectedAmenity.distanceMeters}m • {selectedAmenity.walkMinutes} min walk
+                  {selectedAmenity.distanceMeters}{t("m •")} {selectedAmenity.walkMinutes} {t("min walk")}
                 </span>
               </div>
-              <h4 className="text-lg font-black text-white mt-2">{selectedAmenity.name}</h4>
-              <p className="text-xs text-gray-300 mt-1 leading-relaxed">{selectedAmenity.detail}</p>
+              <h4 className="text-lg font-black text-white mt-2">{t(selectedAmenity.name)}</h4>
+              <p className="text-xs text-gray-300 mt-1 leading-relaxed">{t(selectedAmenity.detail)}</p>
               {selectedAmenity.approxCost && (
                 <div className="mt-3 text-xs font-bold text-emerald-400">
-                  Est. Cost: <span className="text-white">{selectedAmenity.approxCost}</span>
+                  {t("Est. Cost:")} <span className="text-white">{localizeCost(selectedAmenity.approxCost || '', locale)}</span>
                 </div>
               )}
               <div className="mt-4 flex items-center gap-3">
@@ -315,7 +318,7 @@ export const CampusInfrastructureRadar: React.FC<Props> = ({ university }) => {
                   rel="noopener noreferrer"
                   className="px-4 py-2 bg-blue-500 text-black font-black text-xs uppercase tracking-wider rounded-xl flex items-center gap-1.5 hover:bg-blue-400 transition-colors"
                 >
-                  Get Directions in Google Maps <ExternalLink size={12} />
+                  {t("Get Directions in Google Maps")} <ExternalLink size={12} />
                 </a>
               </div>
             </div>
@@ -337,21 +340,21 @@ export const CampusInfrastructureRadar: React.FC<Props> = ({ university }) => {
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">
-                      {amenity.category}
+                      {t(amenity.category)}
                     </span>
                     <span className="text-xs font-mono font-black text-emerald-400">
-                      {amenity.walkMinutes} min walk
+                      {amenity.walkMinutes} {t("min walk")}
                     </span>
                   </div>
 
-                  <h5 className="text-sm font-black text-white mt-1.5 line-clamp-1">{amenity.name}</h5>
+                  <h5 className="text-sm font-black text-white mt-1.5 line-clamp-1">{t(amenity.name)}</h5>
 
                   <p className="text-[11px] text-gray-400 mt-1 line-clamp-2 leading-relaxed">
-                    {amenity.highlight}
+                    {t(amenity.highlight)}
                   </p>
 
                   <div className="mt-3 pt-3 border-t border-gray-800/80 flex items-center justify-between text-[11px]">
-                    <span className="text-gray-400 font-mono">{amenity.distanceMeters}m from campus</span>
+                    <span className="text-gray-400 font-mono">{amenity.distanceMeters}{t("m from campus")}</span>
                     <a
                       href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(amenity.name + ' ' + university.location)}`}
                       target="_blank"
@@ -359,7 +362,7 @@ export const CampusInfrastructureRadar: React.FC<Props> = ({ university }) => {
                       onClick={(e) => e.stopPropagation()}
                       className="text-blue-400 hover:text-white font-bold flex items-center gap-1"
                     >
-                      Maps <ExternalLink size={11} />
+                      {t("Maps")} <ExternalLink size={11} />
                     </a>
                   </div>
                 </div>

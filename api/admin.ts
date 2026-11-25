@@ -1,93 +1,46 @@
-import { createClient } from '@supabase/supabase-js';
+import { db, digest, emailField, endpoint, HttpError, id, publicUser, requiresInvitation, requireUser, secret, textField } from '../server/backend';
 
-const jsonError = (res: any, status: number, message: string) => res.status(status).json({ error: message });
-
-export default async function handler(req: any, res: any) {
-  if (!['GET', 'POST', 'DELETE'].includes(req.method)) {
-    res.setHeader('Allow', 'GET, POST, DELETE');
-    return jsonError(res, 405, 'Method not allowed');
-  }
-
-  const token = String(req.headers.authorization || '').replace(/^Bearer\s+/i, '');
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const anonKey = process.env.SUPABASE_ANON_KEY;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!token || !supabaseUrl || !anonKey || !serviceRoleKey) {
-    return jsonError(res, 401, 'Administrator sign-in is required');
-  }
-
-  const authClient = createClient(supabaseUrl, anonKey, {
-    global: { headers: { Authorization: `Bearer ${token}` } },
-    auth: { persistSession: false },
-  });
-  const { data: authData, error: authError } = await authClient.auth.getUser(token);
-  if (authError || !authData.user) return jsonError(res, 401, 'Session is invalid or expired');
-  if (authData.user.app_metadata?.role !== 'admin') return jsonError(res, 403, 'Administrator access required');
-
-  const admin = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
+export default endpoint(['GET', 'POST', 'DELETE'], async (req, res) => {
+  const actor = await requireUser(req);
+  if (actor.role !== 'admin') throw new HttpError(403, 'Administrator access required');
+  const client = await db();
 
   if (req.method === 'GET') {
-    const [authUsers, profiles, applications, aiUsage] = await Promise.all([
-      admin.auth.admin.listUsers({ page: 1, perPage: 1000 }),
-      admin.from('profiles').select('id, full_name, target_country'),
-      admin.from('applications').select('id', { count: 'exact', head: true }),
-      admin.from('ai_usage').select('id', { count: 'exact', head: true }),
-    ]);
-    if (authUsers.error || profiles.error || applications.error || aiUsage.error) {
-      return jsonError(res, 503, 'Admin data is temporarily unavailable');
-    }
-
-    const profileById = new Map((profiles.data || []).map((profile: any) => [profile.id, profile]));
-    const users = authUsers.data.users.map((user) => {
-      const profile: any = profileById.get(user.id);
-      return {
-        id: user.id,
-        name: profile?.full_name || user.user_metadata?.full_name || user.email?.split('@')[0] || 'Student',
-        email: user.email || '',
-        targetCountry: profile?.target_country || user.user_metadata?.target_country || 'Not selected',
-        registeredAt: user.created_at.split('T')[0],
-        role: user.app_metadata?.role === 'admin' ? 'admin' : 'user',
-        lastSignInAt: user.last_sign_in_at || null,
-        emailConfirmed: Boolean(user.email_confirmed_at),
-      };
-    });
-
+    const [accounts, applications, usage] = await client.batch([
+      'SELECT * FROM users ORDER BY created DESC',
+      "SELECT count(*) AS total FROM records WHERE kind = 'application'",
+      'SELECT count(*) AS total FROM ai_usage',
+    ], 'read');
+    const users = accounts.rows.map(row => ({
+      ...publicUser(row), lastSignInAt: row.last_sign_in, registrationComplete: Boolean(row.password),
+    }));
     return res.status(200).json({
-      users,
-      stats: { users: users.length, applications: applications.count || 0, aiRequests: aiUsage.count || 0 },
+      users, stats: { users: users.length, applications: Number(applications.rows[0].total), aiRequests: Number(usage.rows[0].total) },
     });
   }
 
   if (req.method === 'POST') {
-    const name = String(req.body?.name || '').trim();
-    const email = String(req.body?.email || '').trim().toLowerCase();
-    const targetCountry = String(req.body?.targetCountry || '').trim();
-    if (!name || !email || !targetCountry || name.length > 120 || targetCountry.length > 120) {
-      return jsonError(res, 400, 'Name, email and target country are required');
-    }
-
-    const { data, error } = await admin.auth.admin.inviteUserByEmail(email, {
-      data: { full_name: name, target_country: targetCountry },
-    });
-    if (error || !data.user) return jsonError(res, 400, error?.message || 'Could not invite candidate');
-    await admin.from('admin_audit_log').insert({
-      admin_user_id: authData.user.id,
-      action: 'user.invited',
-      target_user_id: data.user.id,
-      metadata: { email, target_country: targetCountry },
-    });
-    return res.status(201).json({ userId: data.user.id });
+    const email = emailField(req.body?.email);
+    if (requiresInvitation(email)) throw new HttpError(400, 'Use the administrator registration script for this email');
+    const name = textField(req.body?.name, 120).trim();
+    const country = textField(req.body?.targetCountry, 120).trim();
+    const invitation = secret();
+    const now = Date.now();
+    const userId = id();
+    const [result] = await client.batch([
+      { sql: 'INSERT INTO users (id, email, name, country, invitation, invitation_expires, created) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT(email) DO NOTHING', args: [userId, email, name, country, digest(invitation), now + 86_400_000, new Date(now).toISOString()] },
+      { sql: "INSERT INTO admin_audit SELECT ?, ?, 'user.invited', id, ? FROM users WHERE id = ?", args: [id(), actor.id, now, userId] },
+    ], 'write');
+    if (!result.rowsAffected) throw new HttpError(409, 'An account or invitation already exists for this email');
+    return res.status(201).json({ userId, invitation });
   }
 
-  const userId = String(req.body?.userId || '');
-  if (!userId) return jsonError(res, 400, 'User ID is required');
-  if (userId === authData.user.id) return jsonError(res, 400, 'You cannot delete your own administrator account');
-  const { error } = await admin.auth.admin.deleteUser(userId);
-  if (error) return jsonError(res, 400, error.message);
-  await admin.from('admin_audit_log').insert({
-    admin_user_id: authData.user.id,
-    action: 'user.deleted',
-    metadata: { deleted_user_id: userId },
-  });
+  const userId = textField(req.body?.userId, 80);
+  if (userId === actor.id) throw new HttpError(400, 'You cannot delete your own administrator account');
+  const [result] = await client.batch([
+    { sql: 'DELETE FROM users WHERE id = ? AND admin_eligible = 0', args: [userId] },
+    { sql: "INSERT INTO admin_audit SELECT ?, ?, 'user.deleted', ?, ? WHERE changes() > 0", args: [id(), actor.id, userId, Date.now()] },
+  ], 'write');
+  if (!result.rowsAffected) throw new HttpError(404, 'Candidate is unavailable for deletion');
   return res.status(200).json({ ok: true });
-}
+});

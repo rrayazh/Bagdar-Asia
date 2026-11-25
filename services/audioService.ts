@@ -92,6 +92,7 @@ class CampusAudioService {
   speak(
     text: string,
     options?: {
+      language?: string;
       rate?: number;
       pitch?: number;
       onBoundary?: (charIndex: number) => void;
@@ -106,13 +107,13 @@ class CampusAudioService {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = options?.rate || 1.0;
     utterance.pitch = options?.pitch || 1.0;
-    utterance.lang = 'en-US';
+    utterance.lang = options?.language || 'en';
 
-    // Pick best English voice if available
+    // Pick a voice matching the selected language if available
     const voices = this.synth.getVoices();
     const preferredVoice = voices.find(v => 
-      (v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Daniel') || v.name.includes('Premium')))
-    ) || voices.find(v => v.lang.startsWith('en'));
+      (v.lang.toLowerCase().startsWith(utterance.lang) && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Daniel') || v.name.includes('Premium')))
+    ) || voices.find(v => v.lang.toLowerCase().startsWith(utterance.lang));
 
     if (preferredVoice) {
       utterance.voice = preferredVoice;

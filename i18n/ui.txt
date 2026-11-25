@@ -1,0 +1,337 @@
+Admissions Portal|Қабылдау порталы|Портал поступления
+60 Universities|60 университет|60 университетов
+12 Countries|12 ел|12 стран
+Live Intel|Дерек іздеу|Поиск сведений
+Strategy|Стратегия|Стратегия
+Essay AI|Эссе талдауы|ИИ-анализ эссе
+Deadlines|Мерзімдер|Сроки
+My Applications|Өтінімдерім|Мои заявки
+Admin|Әкімші|Администратор
+Sign Out|Шығу|Выйти
+Sign In / Register|Кіру / Тіркелу|Войти / Регистрация
+Premier Asian Higher Education Gateway|Азиядағы жоғары білім|Высшее образование в Азии
+Your Gateway to 60 Premier Asian Universities across 12 Countries|Азияның 12 еліндегі 60 жетекші университетке жол|Ваш путь в 60 ведущих университетов 12 стран Азии
+Search by major, institution (e.g. SNU, NUS), or scholarship...|Мамандық, университет (SNU, NUS) немесе шәкіртақы бойынша іздеу…|Поиск по специальности, вузу (SNU, NUS) или стипендии…
+Curated University Directory|Университеттер каталогы|Каталог университетов
+12 Asian Countries|Азияның 12 елі|12 стран Азии
+Regional Academic Hubs|Өңірлік білім орталықтары|Образовательные центры региона
+Live Deadlines|Өтінім мерзімдері|Сроки подачи заявок
+Next:|Келесі мерзім:|Ближайший срок:
+Active Admission Clocks|Қабылдау мерзімдерін бақылау|Отслеживание сроков приёма
+Google Search Data|Google іздеу деректері|Данные поиска Google
+Google Maps Data|Google Maps деректері|Данные Google Maps
+Live Grounded Admissions & Campus Geography|Қабылдау және кампус туралы дереккөздер|Источники о поступлении и кампусах
+Research current admissions, scholarships, campus transit, and student housing with source links and location context.|Қабылдау, шәкіртақы, кампус көлігі мен жатақхана туралы өзекті деректерді карта мен дереккөздерден қараңыз.|Изучайте актуальные условия приёма, стипендии, транспорт и общежития по картам и ссылкам на источники.
+Launch Live Intel|Дерек іздеуді ашу|Открыть поиск сведений
+Explore by Country|Елдер бойынша қарау|Посмотреть по странам
+Home|Басты бет|Главная
+Live Intel (Search & Maps)|Дерек іздеу (іздеу және карталар)|Поиск сведений (поиск и карты)
+Strategy Planner|Дайындық жоспары|План подготовки
+Application Hub|Өтінімдер орталығы|Центр заявок
+Applicant Profile|Талапкер профилі|Профиль абитуриента
+Admin Dashboard|Әкімші панелі|Панель администратора
+Restricted Administrator Area|Әкімшілерге арналған бөлім|Закрытый раздел администратора
+This dashboard is strictly protected and accessible only to authorized Bagdar Asia administrative personnel.|Бұл панельге Bagdar Asia әкімшілері ғана кіре алады.|Эта панель доступна только уполномоченным администраторам Bagdar Asia.
+Sign In with Authorized Account|Әкімші аккаунтымен кіру|Войти как администратор
+Return to Home|Басты бетке қайту|Вернуться на главную
+Candidate invitation link (valid for 24 hours)|Үміткердің шақыру сілтемесі (24 сағат жарамды)|Ссылка-приглашение кандидата (действует 24 часа)
+Dismiss|Жабу|Закрыть
+Certified Secure Area|Қорғалған бөлім|Защищённый раздел
+Bagdar Asia Admin Console|Bagdar Asia әкімші панелі|Панель администратора Bagdar Asia
+Active Administrator:|Әкімші:|Администратор:
+Add User|Пайдаланушы қосу|Добавить пользователя
+Export CSV|CSV экспорттау|Экспорт CSV
+Total Registered|Тіркелгендер саны|Всего зарегистрировано
+Active Student Profiles|Белсенді талапкер профильдері|Активные профили абитуриентов
+Essay AI Scans|Эссе талдаулары|Проверки эссе
+Tracked AI Requests|Есептелген ЖИ сұраулары|Учтённые запросы к ИИ
+Top Destination|Ең танымал ел|Самая популярная страна
+No applicants yet|Әзірге талапкерлер жоқ|Абитуриентов пока нет
+Applications|Өтінімдер|Заявки
+Saved Application Records|Сақталған өтінімдер|Сохранённые заявки
+Target Country Distribution|Таңдалған елдер бойынша бөлу|Распределение по выбранным странам
+No applicant distribution data yet|Елдер бойынша дерек әлі жоқ|Данных по странам пока нет
+Country metrics will populate as applicants register.|Талапкерлер тіркелгенде елдер бойынша дерек пайда болады.|Статистика по странам появится после регистрации абитуриентов.
+Registered Candidates Registry|Тіркелген үміткерлер|Реестр кандидатов
+Account data stored in Turso|Аккаунт деректері Turso-да сақталады|Данные аккаунтов хранятся в Turso
+Search candidates...|Үміткерлерді іздеу…|Поиск кандидатов…
+All Countries|Барлық ел|Все страны
+Candidate Name|Үміткердің аты-жөні|Имя кандидата
+Email Address|Электрондық пошта|Электронная почта
+Target Destination|Таңдалған ел|Выбранная страна
+Registered Date|Тіркелген күні|Дата регистрации
+Status / Role|Күйі / Рөлі|Статус / Роль
+Actions|Әрекеттер|Действия
+Loading account registry…|Аккаунттар жүктелуде…|Загрузка реестра…
+No registered applicants yet.|Әзірге тіркелген талапкерлер жоқ.|Зарегистрированных абитуриентов пока нет.
+Candidates who create an account via the Sign In / Register form will appear here in real-time.|Тіркелу формасы арқылы аккаунт ашқан талапкерлер осы тізімге қосылады.|Кандидаты, создавшие аккаунт через форму регистрации, появятся в этом списке.
+No registered applicants matching current search criteria.|Іздеу шартына сәйкес талапкер табылмады.|По заданным критериям кандидатов не найдено.
+Active User|Белсенді пайдаланушы|Активный пользователь
+Invitation Pending|Шақыру қабылданбаған|Приглашение ожидает принятия
+Delete user|Пайдаланушыны жою|Удалить пользователя
+Add Registered Candidate|Үміткерді шақыру|Пригласить кандидата
+Full Name|Аты-жөні|Имя и фамилия
+Target Country|Таңдаған ел|Страна поступления
+Cancel|Бас тарту|Отмена
+Save Candidate|Шақыру жасау|Создать приглашение
+Your Application Hub|Өтінімдеріңіз|Ваши заявки
+Sign in to save universities and track every application stage across devices.|Университеттерді сақтап, өтінім кезеңдерін кез келген құрылғыдан бақылау үшін кіріңіз.|Войдите, чтобы сохранять вузы и отслеживать этапы подачи заявок с разных устройств.
+Sign In|Кіру|Войти
+Personal workspace|Жеке жұмыс кеңістігі|Личное рабочее пространство
+Move each university from research to final decision.|Әр университет бойынша іздеуден соңғы шешімге дейінгі кезеңдерді бақылаңыз.|Отслеживайте путь по каждому вузу от поиска до окончательного решения.
+Active applications|Белсенді өтінімдер|Активные заявки
+Loading your workspace…|Жұмыс кеңістігі жүктелуде…|Загрузка рабочего пространства…
+Your shortlist is empty|Таңдаулылар тізімі бос|В избранном пока пусто
+Open the university catalog and tap the heart on institutions you want to track.|Каталогты ашып, бақылағыңыз келген университеттің жүрек белгісін басыңыз.|Откройте каталог и нажмите на сердечко у интересующего вуза.
+Reference rank #|Анықтамалық рейтинг №|Справочная позиция №
+View requirements|Талаптарды қарау|Посмотреть требования
+Application notes, missing documents, interview details…|Өтінім жазбалары, жетіспейтін құжаттар, сұхбат мәліметтері…|Заметки к заявке, недостающие документы, детали собеседования…
+Notes save automatically|Жазбалар автоматты түрде сақталады|Заметки сохраняются автоматически
+Close|Жабу|Закрыть
+Bagdar Asia Portal|Bagdar Asia порталы|Портал Bagdar Asia
+Welcome Back|Қош келдіңіз|С возвращением
+Create Account|Аккаунт ашу|Создать аккаунт
+Access admission tracking and saved strategies|Сақталған жоспарлар мен өтінімдерді ашыңыз|Откройте сохранённые планы и отслеживание заявок
+Register your target destination and scholarship profile|Оқу елін таңдап, шәкіртақы профилін жасаңыз|Выберите страну обучения и создайте профиль для стипендий
+Register|Тіркелу|Зарегистрироваться
+Password|Құпиясөз|Пароль
+Signing in…|Кіру орындалуда…|Вход…
+Sign In to Portal|Порталға кіру|Войти в портал
+e.g. Aigerim Saparova|мысалы, Айгерім Сапарова|например, Айгерим Сапарова
+Create a strong password|Сенімді құпиясөз ойлап табыңыз|Придумайте надёжный пароль
+Creating account…|Аккаунт ашылуда…|Создание аккаунта…
+Complete Registration|Тіркелуді аяқтау|Завершить регистрацию
+Interactive Campus Location|Кампустың интерактивті картасы|Интерактивная карта кампуса
+Daytime Campus Sunlight|Күндізгі кампус көрінісі|Дневной вид кампуса
+Day|Күндіз|День
+Night Student Life Lighting|Түнгі кампус көрінісі|Ночной вид кампуса
+Night|Түнде|Ночь
+Maps Street View|Көше панорамасы|Панорама улиц
+Campus Location View|Кампус картасы|Расположение кампуса
+Toggle Fullscreen|Толық экран режимі|Полноэкранный режим
+Exit Campus Immersion|Кампус шолуынан шығу|Выйти из обзора кампуса
+Google Maps Street View|Google Maps көше панорамасы|Панорама улиц Google Maps
+Open in Google Maps|Google Maps-та ашу|Открыть в Google Maps
+Intel|Мәлімет|Сведения
+• Lat|• Ендік|• Широта
+Bright daytime lighting|Күндізгі жарық|Дневное освещение
+Vibrant student night vibes|Түнгі студенттік өмір|Ночная студенческая жизнь
+• Tap pulsing pins for facility tips.|• Нысан туралы білу үшін карта белгісін басыңыз.|• Нажмите на пульсирующую метку, чтобы узнать об объекте.
+AI Campus Audio Tour|Кампустың ЖИ аудиотуры|Аудиотур по кампусу с ИИ
+Voice Narrative • Ambient Engine|Дауыс түсіндірмесі және айнала дыбыстары|Голосовое сопровождение и фоновые звуки
+Stop|Тоқтату|Остановить
+Start Tour|Турды бастау|Начать тур
+Campus Zones:|Кампус аймақтары:|Зоны кампуса:
+Explore Street View Full Screen|Панораманы толық экранда ашу|Открыть панораму на весь экран
+Live Maps Infrastructure Radar|Инфрақұрылым картасы|Карта инфраструктуры
+1.2km Perimeter Scan|1,2 км радиуста шолу|Обзор в радиусе 1,2 км
+Campus Infrastructure & Spatial Radar|Кампус пен маңайдың инфрақұрылымы|Инфраструктура кампуса и окрестностей
+Explore nearby metro lines, dorm housing, dining, and health services around|Маңайындағы метро, жатақхана, асхана және медициналық қызметтерді қараңыз:|Посмотрите метро, общежития, столовые и медицинские учреждения рядом с
+; confirm details on the linked map before planning.|. Жоспарламас бұрын картадағы мәліметтерді тексеріңіз.|. Перед планированием сверьте сведения на карте.
+Explore on Google Maps|Google Maps-та қарау|Посмотреть в Google Maps
+Center: Campus Core|Ортасы: бас кампус|Центр: главный кампус
+Outer Ring: 1,000m|Сыртқы шеңбер: 1000 м|Внешний радиус: 1000 м
+Target Amenity Spotlight|Таңдалған нысан|Выбранный объект
+m •|м •|м •
+min walk|мин жаяу|мин пешком
+Est. Cost:|Болжамды құны:|Примерная стоимость:
+Get Directions in Google Maps|Google Maps-та бағыт алу|Построить маршрут в Google Maps
+m from campus|м кампустан|м от кампуса
+Maps|Карта|Карты
+Back to Home|Басты бетке оралу|На главную
+Regional Hubs|Өңірлік білім орталықтары|Образовательные центры
+Explore 12 premier academic destinations across Asia, from technical powerhouses in the East to emerging research hubs in Central Asia.|Шығыс Азияның технология орталықтарынан Орталық Азияның зерттеу орталықтарына дейінгі 12 елмен танысыңыз.|Изучите 12 стран Азии, от технологических центров на востоке до растущих исследовательских центров Центральной Азии.
+Total Countries Tracked:|Каталогтағы елдер саны:|Всего стран в каталоге:
+Explore Institutions|Университеттерді қарау|Посмотреть университеты
+Closest Deadline|Ең жақын мерзім|Ближайший срок
+Closing Soon|Жақында аяқталады|Скоро заканчивается
+Reminder Active|Еске салғыш қосулы|Напоминание включено
+Notify Me|Маған еске салу|Напомнить мне
+Visit Portal|Порталға өту|Перейти на портал
+Master Deadline Schedule|Қабылдау күнтізбесі|Календарь поступления
+Tracking|Бақылауда|Отслеживание
+Admissions|Қабылдау|Приём
+Urgent|Шұғыл|Срочно
+Official Portal|Ресми портал|Официальный портал
+d|к|д
+h|сағ|ч
+m|мин|мин
+s|сек|с
+Strict Admissions Assessment Engine|Қабылдау талаптарына сай бағалау|Оценка по критериям приёма
+Bagdar Asia Essay AI Reviewer|Bagdar Asia эссе талдауы|Анализ эссе Bagdar Asia
+Evaluate admissions motivation statements against rigorous criteria for top Asian universities.|Мотивациялық хатыңызды Азияның жетекші университеттері қолданатын талаптар бойынша бағалаңыз.|Проверьте мотивационное письмо по критериям ведущих университетов Азии.
+Target Institution|Таңдаған университет|Выбранный университет
+-- Choose from 60 Curated Asian Universities --|— Азияның 60 университетінің бірін таңдаңыз —|— Выберите один из 60 университетов Азии —
+Or type custom institution name...|Немесе университет атауын жазыңыз…|Или введите название вуза…
+Institutional Facts for|Университет туралы деректер:|Сведения об университете:
+1-Click Insert|Бір рет басып енгізу|Вставка в один клик
+Inserted!|Енгізілді!|Вставлено!
+Insert Fact|Деректі енгізу|Вставить факт
+Motivational Statement / Essay Draft|Мотивациялық хат / эссе нобайы|Мотивационное письмо / черновик эссе
+words|сөз|слов
+Paste your essay draft here... Include academic background, institutional interest, and career objectives.|Эссе нобайын осында қойыңыз. Біліміңізді, университетті таңдау себебін және кәсіби мақсаттарыңызды сипаттаңыз.|Вставьте черновик эссе. Расскажите об образовании, интересе к вузу и карьерных целях.
+Performing Admissions Validation...|Эссе бағалануда…|Идёт оценка эссе…
+Run Essay Assessment|Эссені бағалау|Оценить эссе
+The evaluation algorithm requires structured, meaningful academic writing. Meaningless characters or random keyboard sequences automatically receive a 0% score.|Бағалау үшін құрылымды, мазмұнды мәтін қажет. Мағынасыз таңбалар немесе кездейсоқ әріптер 0% алады.|Для оценки нужен связный и содержательный текст. Бессмысленные символы или случайные комбинации получают 0%.
+AI Assessment|ЖИ бағасы|Оценка ИИ
+Institutional Fit & Structure|Университетке сәйкестік және құрылым|Соответствие вузу и структура
+Score|Балл|Балл
+Narrative Strength|Баяндаудың нанымдылығы|Убедительность изложения
+Grammar & Syntactic Flow|Грамматика және сөйлем құрылымы|Грамматика и построение предложений
+Strategic Institutional Fit|Университетке стратегиялық сәйкестік|Стратегическое соответствие вузу
+Actionable Improvements|Нақты ұсыныстар|Рекомендации по улучшению
+Awaiting Draft Submission|Эссе нобайын күту|Ожидается черновик эссе
+Select one of the 60 universities, write or insert institutional facts, and run review to receive structural and narrative scores.|60 университеттің бірін таңдаңыз, университет деректерін жазыңыз немесе енгізіңіз, содан кейін эссенің құрылымы мен баяндауын бағалаңыз.|Выберите один из 60 вузов, добавьте сведения о нём и запустите проверку структуры и изложения.
+Grounded AI Engine|Дереккөзге сүйенетін ЖИ|ИИ с опорой на источники
+Google Search Grounding|Google іздеуіне сүйенген талдау|Анализ на основе поиска Google
+Google Maps Grounding|Google Maps-қа сүйенген талдау|Анализ на основе Google Maps
+Current admissions, deadlines, scholarships, and visa research with source links for independent verification.|Қабылдау, мерзімдер, шәкіртақы және виза туралы өзекті ақпаратты дереккөз сілтемелерімен тексеріңіз.|Проверяйте актуальные условия приёма, сроки, стипендии и визовые требования по ссылкам на источники.
+Pinpoint campus spatial geography, nearest transit hubs, student dorms, and neighborhood amenities backed by Google Maps.|Кампусты, жақын көлік тораптарын, жатақханаларды және маңайдағы нысандарды Google Maps арқылы табыңыз.|Найдите кампус, транспортные узлы, общежития и объекты рядом с помощью Google Maps.
+Google Search|Google іздеуі|Поиск Google
+Target University Focus|Зерттелетін университет|Университет для поиска
+All Premier Asian Universities (General Inquiry)|Азияның барлық жетекші университеті (жалпы сұрау)|Все ведущие университеты Азии (общий запрос)
+(Rank #|(Рейтинг №|(Место №
+User Coordinates|Пайдаланушы координаттары|Координаты пользователя
+Detecting GPS...|Орналасқан жер анықталуда…|Определяем местоположение…
+GPS Active (|GPS қосулы (|GPS включён (
+Detect My Location|Орналасқан жерімді анықтау|Определить моё местоположение
+Academic Cycle|Оқу жылы|Учебный цикл
+2026 / 2027 Admissions|2026 / 2027 оқу жылына қабылдау|Приём на 2026 / 2027 год
+Recommended Grounded Inquiries|Ұсынылатын сұрақтар|Рекомендуемые вопросы
+Scan Intel|Іздеуді бастау|Начать поиск
+Searching live web data & official university portals...|Интернет пен ресми университет порталдарынан ізделуде…|Поиск в интернете и на официальных сайтах университетов…
+Querying Google Maps spatial records & campus neighborhood...|Google Maps-та кампус маңы зерттелуде…|Поиск сведений о кампусе и окрестностях в Google Maps…
+Applying Grounding via gemini-3.5-flash with|gemini-3.5-flash дереккөздерді тексеруде:|gemini-3.5-flash проверяет источники через
+tool|құралы|инструмент
+Web Grounded Analysis|Интернет деректеріне сүйенген талдау|Анализ по интернет-источникам
+Maps Grounded Analysis|Картаға сүйенген талдау|Анализ по картам
+Refresh Intel|Деректерді жаңарту|Обновить сведения
+Refresh|Жаңарту|Обновить
+Google Search Queries:|Google іздеу сұраулары:|Запросы в поиске Google:
+Official Web Sources (|Ресми интернет дереккөздері (|Официальные интернет-источники (
+Google Maps Direct Places (|Google Maps орындары (|Места в Google Maps (
+Direct External Links|Сыртқы сілтемелер|Внешние ссылки
+Scan Official Admissions & Deadlines|Қабылдау талаптары мен мерзімдерін іздеу|Найти официальные условия приёма и сроки
+Explore Campus Location & Transit|Кампус пен көлік байланысын қарау|Изучить кампус и транспорт
+Choose a recommended inquiry chip above or enter your custom question to run a grounded scan via gemini-3.5-flash.|Ұсынылған сұрақты таңдаңыз немесе өз сұрағыңызды жазып, gemini-3.5-flash арқылы іздеңіз.|Выберите предложенный вопрос или введите свой для поиска через gemini-3.5-flash.
+Asian Admissions Applicant|Азия университеттеріне талапкер|Абитуриент вузов Азии
+Verified Applicant|Тіркелген талапкер|Зарегистрированный абитуриент
+Guest Profile|Қонақ профилі|Гостевой профиль
+Complete your profile to customize university matching and essay strategy.|Университет іздеуі мен эссе стратегиясын бейімдеу үшін профильді толтырыңыз.|Заполните профиль, чтобы настроить подбор вузов и стратегию работы над эссе.
+Intake:|Қабылдау кезеңі:|Набор:
+Focus:|Бағыт:|Направление:
+Region: 12 Asian Countries|Өңір: Азияның 12 елі|Регион: 12 стран Азии
+Cancel Editing|Өңдеуден бас тарту|Отменить редактирование
+Edit Academic Metrics|Академиялық көрсеткіштерді өңдеу|Изменить академические показатели
+Academic profile updated and saved to your applicant workspace.|Академиялық профиль жаңартылып, жұмыс кеңістігіне сақталды.|Академический профиль обновлён и сохранён в рабочем пространстве.
+Edit Academic Benchmarks|Оқу көрсеткіштерін өңдеу|Изменить показатели успеваемости
+Used to benchmark 60 Asian University requirements|Азияның 60 университетінің талаптарымен салыстыруға арналған|Для сравнения с требованиями 60 университетов Азии
+Cumulative GPA (out of 4.0)|Жалпы GPA (4,0-ден)|Средний балл GPA (из 4,0)
+e.g. 3.85|мысалы, 3,85|например, 3,85
+SAT / ACT Equivalent Score|SAT / ACT баллы|Баллы SAT / ACT
+e.g. 1480 or ACT 33|мысалы, 1480 немесе ACT 33|например, 1480 или ACT 33
+English Exam (IELTS / TOEFL)|Ағылшын тілі емтиханы (IELTS / TOEFL)|Экзамен по английскому (IELTS / TOEFL)
+e.g. IELTS 7.5 or TOEFL 105|мысалы, IELTS 7,5 немесе TOEFL 105|например, IELTS 7,5 или TOEFL 105
+Target Major / Degree|Мамандық / дәреже|Специальность / степень
+e.g. Computer Science|мысалы, Информатика|например, Информатика
+Save Profile|Профильді сақтау|Сохранить профиль
+Applicant GPA|Талапкердің GPA көрсеткіші|GPA абитуриента
+Competitive for Tier-1 Asian Unis|Азияның жетекші университеттері үшін бәсекелі көрсеткіш|Конкурентный балл для ведущих вузов Азии
+Testing Benchmark|Емтихан нәтижесі|Результат экзамена
+SAT / ACT Profile|SAT / ACT көрсеткіші|Показатель SAT / ACT
+Language Score|Тіл емтиханының баллы|Балл языкового экзамена
+IELTS / TOEFL Ready|IELTS / TOEFL нәтижесі|Результат IELTS / TOEFL
+Target Asian Destinations|Таңдалған Азия елдері|Выбранные страны Азии
+Select the countries you are actively targeting for admissions|Оқуға түскіңіз келетін елдерді таңдаңыз|Выберите страны, в которые планируете поступать
+Selected|Таңдалған|Выбрано
+Admissions Strategy|Қабылдау стратегиясы|Стратегия поступления
+Ready to Draft Your Statement of Purpose?|Мотивациялық хатыңызды жазуға дайынсыз ба?|Готовы написать мотивационное письмо?
+Benchmark your essay against real successful international applicant essays with Bagdar Essay AI.|Bagdar эссе талдауымен хатыңызды сәтті өтінімдердегі эсселермен салыстырыңыз.|Сравните своё эссе с успешными работами иностранных абитуриентов с помощью Bagdar.
+Launch Essay AI|Эссе талдауын ашу|Открыть анализ эссе
+Admissions Dossier|Қабылдау құжаттары|Документы для поступления
+Checklist for 2026/2027 intake portals|2026/2027 қабылдауына арналған тізім|Список документов для приёма 2026/2027
+Readiness|Дайындық|Готовность
+AI Engine Infrastructure|ЖИ зерттеу құралдары|Инструменты исследования с ИИ
+Connected to source-linked admissions research and Google Maps location tools for campus planning and application support.|Қабылдау дереккөздері мен Google Maps құралдары кампусты зерттеуге және өтінім дайындауға көмектеседі.|Источники о поступлении и Google Maps помогают изучить кампус и подготовить заявку.
+Master|Негізгі|Основной
+Timeline|жоспар|график
+Milestones Reached|Аяқталған кезеңдер|Завершённые этапы
+Next Deadline|Келесі мерзім|Ближайший срок
+Nov 30 • Winter Intake|30 қараша • Қысқы қабылдау|30 ноября • Зимний набор
+Workspace Status|Жұмыс кеңістігінің күйі|Статус рабочего пространства
+Cloud Sync Enabled|Бұлтпен синхрондау қосулы|Синхронизация с облаком включена
+Local Guest Mode|Жергілікті қонақ режимі|Локальный гостевой режим
+My Roadmap|Менің жоспарым|Мой план
+Add task...|Тапсырма қосу…|Добавить задачу…
+Budget Estimation|Бюджетті бағалау|Оценка бюджета
+Student Life Simulator|Студенттік өмір симуляторы|Симулятор студенческой жизни
+Interactive Micro-Engine|Интерактивті режим|Интерактивный режим
+Simulate 24 Hours at|Бір күн студент болып көріңіз:|Проведите день в роли студента:
+Walk in the shoes of an international student. Make instinctive day-to-day choices across libraries, cafeterias, and research labs grounded in real campus geography.|Шетелдік студенттің бір күнін өткізіңіз. Кампустың нақты картасындағы кітапхана, асхана және зертханада күнделікті шешімдер қабылдаңыз.|Проживите день иностранного студента. Принимайте повседневные решения в библиотеке, столовой и лаборатории на реальной карте кампуса.
+Focus Discipline|Оқу бағыты|Направление обучения
+Track|Бағыты|Направление
+Acad|Оқу|Учёба
+Soc|Қарым-қатынас|Общение
+Synthesizing Your 24-Hour Campus Schedule...|Кампустағы бір күндік кесте жасалуда…|Составляем расписание на день в кампусе…
+Evaluating facility transit, study stamina, and student community synergy at|Кампус ішіндегі жол, оқу жүктемесі және студенттік орта бағалануда:|Оцениваем маршруты по кампусу, учебную нагрузку и студенческую среду в
+Unlocked Campus Persona|Кампустағы студент бейнеңіз|Ваш студенческий образ
+24-Hour Student Simulation •|Бір күндік студент симуляциясы •|День студента •
+Academic|Оқу|Учёба
+Social|Қарым-қатынас|Общение
+Energy|Қуат|Энергия
+Culture|Мәдениет|Культура
+Simulated Daily Schedule & Campus Coordinates|Бір күндік кесте және кампус координаттары|Расписание дня и координаты кампуса
+Campus Life Synthesis|Кампус өмірінің қорытындысы|Итоги дня в кампусе
+Simulate Another Day|Басқа күнді өткізу|Смоделировать ещё один день
+Back to Search Results|Іздеу нәтижелеріне қайту|К результатам поиска
+REFERENCE RANK #|АНЫҚТАМАЛЫҚ РЕЙТИНГ №|СПРАВОЧНАЯ ПОЗИЦИЯ №
+Core|Негізгі|Основное
+Experience Campus in AI/VR|Кампусты ЖИ/VR арқылы шолу|Посмотреть кампус с ИИ/VR
+Academic Benchmarks|Академиялық көрсеткіштер|Академические показатели
+Admissions Benchmark Match|Қабылдау талаптарына сәйкестік|Соответствие требованиям приёма
+Target Profile Alignment|Талапкер профилінің сәйкестігі|Соответствие профиля абитуриента
+Academic benchmarks align with international admissions criteria for|Академиялық көрсеткіштер халықаралық қабылдау талаптарына сай:|Академические показатели соответствуют критериям международного приёма в
+Search Grounding|Іздеу деректеріне сүйенген талдау|Анализ на основе поиска
+Source-Linked Admissions & Policy Research|Қабылдау ережелері мен дереккөздер|Правила приёма и источники
+Cross-reference official application windows, IELTS/TOEFL requirements, and international scholarship quotas using live Google Search data.|Өтінім мерзімдерін, IELTS/TOEFL талаптарын және халықаралық шәкіртақы квоталарын Google іздеуімен тексеріңіз.|Уточните сроки подачи, требования IELTS/TOEFL и квоты международных стипендий через поиск Google.
+Scan Live Admissions|Қабылдау шарттарын тексеру|Проверить условия приёма
+GPA (Min)|Ең төменгі GPA|Минимальный GPA
+SAT / Test|SAT / Тест|SAT / Тест
+Valued Competitive DNA|Бағаланатын қасиеттер|Ценные качества абитуриента
+Distinguished Network|Танымал түлектер|Известные выпускники
+Street View Panorama|Көше панорамасы|Панорама улиц
+AI Audio Tour|ЖИ аудиотуры|Аудиотур с ИИ
+Campus Location Explorer & Student Experience|Кампус пен студенттік өмірге шолу|Кампус и студенческая жизнь
+Walk through the main ceremonial gates, browse the central research library, and inspect the international residence quad in day or night mode with an interactive AI audio guide.|Интерактивті ЖИ аудиогидпен бас қақпаны, орталық кітапхананы және халықаралық жатақхананы күндіз не түнде аралаңыз.|С интерактивным ИИ-аудиогидом осмотрите главные ворота, центральную библиотеку и международное общежитие в дневном или ночном режиме.
+Google Maps Live Intel|Google Maps деректері|Сведения из Google Maps
+Open Campus Explorer|Кампус картасын ашу|Открыть карту кампуса
+Institutional Ecosystem|Университет ортасы|Среда университета
+Integrated urban environment in|Қалалық ортамен біріктірілген кампус:|Кампус в городской среде:
+, featuring high-density innovation labs and 24/7 global libraries.|. Инновациялық зертханалар және тәулік бойы ашық кітапханалар бар.|. Здесь есть инновационные лаборатории и круглосуточные библиотеки.
+Core Academic Pillars|Негізгі оқу бағыттары|Основные направления обучения
+Global Infrastructure|Халықаралық инфрақұрылым|Международная инфраструктура
+High-speed regional connectivity, secure global dormitories, and multi-cuisine hubs designed for massive international mobility.|Жылдам өңірлік көлік байланысы, қауіпсіз жатақханалар және түрлі елдердің асханалары халықаралық студенттерге қолайлы жағдай жасайды.|Быстрый региональный транспорт, безопасные общежития и разнообразная кухня создают условия для иностранных студентов.
+Annual Tuition|Жылдық оқу ақысы|Стоимость обучения в год
+Logistics|Логистика|Логистика
+Living Index|Тұру шығындары|Расходы на проживание
+/mo|/ай|/мес
+Scholarship & Admissions Strategy|Шәкіртақы және қабылдау стратегиясы|Стратегия поступления и получения стипендии
+Strategic Essay Drafting|Эссе нобайын дайындау|Подготовка черновика эссе
+Select Tactical Evidence to Integrate|Эссеге қосылатын деректерді таңдаңыз|Выберите факты для эссе
+Impact Definition & Goal|Мақсат және үлес|Цель и вклад
+Define your institutional impact area (e.g., Sustainable Tech, Policy Innovation)...|Үлес қосатын саланы жазыңыз (мысалы, тұрақты технологиялар немесе саясаттағы инновациялар)…|Укажите область своего вклада (например, устойчивые технологии или инновации в политике)…
+Generate Application Hook|Эссенің кіріспесін құрастыру|Создать вступление для эссе
+Optimized Admission Hook|Эссенің кіріспесі|Вступление для эссе
+Engine Mode:|Модель режимі:|Режим модели:
+Copy Segment|Үзіндіні көшіру|Скопировать фрагмент
+Institutional Knowledge Base|Университет туралы ақпарат|Сведения об университете
+Explore specific queries regarding your future at|Осы университет туралы сұрақтарды қараңыз:|Изучите вопросы о будущем обучении в
+Academic Leaders|Жетекші университеттер|Ведущие университеты
+Top 60 universities in Asia sorted by global ranking.|Әлемдік рейтинг бойынша сұрыпталған Азияның үздік 60 университеті.|60 лучших университетов Азии по мировому рейтингу.
+Search all 60 universities...|60 университеттен іздеу…|Поиск по 60 университетам…
+No institutions found matching your criteria|Іздеу шартына сай университет табылмады|По заданным критериям вузы не найдены
+Try adjusting your search keywords.|Басқа іздеу сөздерін қолданып көріңіз.|Попробуйте изменить поисковый запрос.
+Clear Search|Іздеуді тазарту|Очистить поиск
+Location Map|Картадағы орны|Расположение на карте
+Strategy & Requirements|Стратегия және талаптар|Стратегия и требования
+Language|Тіл|Язык

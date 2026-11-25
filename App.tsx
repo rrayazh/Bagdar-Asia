@@ -1,7 +1,9 @@
+import { useLocale } from "./i18n/locale";
 import React, { lazy, Suspense, useState, useEffect, useRef } from 'react';
 import { University, SkillScores, User } from './types';
 import CountrySelector from './components/CountrySelector';
 import UniversityList from './components/UniversityList';
+import LanguageSwitcher from './components/LanguageSwitcher';
 import AuthModal from './components/AuthModal';
 const UniversityDetail = lazy(() => import('./components/UniversityDetail'));
 const EssayAI = lazy(() => import('./components/EssayAI'));
@@ -12,8 +14,7 @@ const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
 const LiveGroundingIntel = lazy(() => import('./components/LiveGroundingIntel'));
 const ApplicationHub = lazy(() => import('./components/ApplicationHub'));
 import { ASIA_COUNTRIES, UPCOMING_DEADLINES } from './constants';
-import { supabase } from './services/supabase';
-import { mapAuthUser } from './services/auth';
+import { currentUser as loadSession, signOut } from './services/auth';
 import { 
   GraduationCap, 
   UserCircle, 
@@ -48,12 +49,25 @@ type ViewState =
   | 'admin';
 
 const App: React.FC = () => {
+  const { t, locale } = useLocale();
   const [view, setView] = useState<ViewState>('home');
   const [selectedUniversity, setSelectedUniversity] = useState<University | null>(null);
   const [countryFilter, setCountryFilter] = useState<string | undefined>();
   const [userScores, setUserScores] = useState<SkillScores | null>(null);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(() => /^#(?:invite|verify|reset)=/.test(window.location.hash));
+  const sessionChanged = useRef(false);
+  const [inviteHash, setInviteHash] = useState(() => window.location.hash);
+
+  useEffect(() => {
+    const openInvitation = () => {
+      const hash = window.location.hash;
+      setInviteHash(hash);
+      if (/^#(?:invite|verify|reset)=/.test(hash)) setAuthModalOpen(true);
+    };
+    window.addEventListener('hashchange', openInvitation);
+    return () => window.removeEventListener('hashchange', openInvitation);
+  }, []);
   const [heroSearch, setHeroSearch] = useState('');
   const handlingHistory = useRef(false);
 
@@ -112,35 +126,35 @@ const App: React.FC = () => {
     if (handlingHistory.current) {
       handlingHistory.current = false;
     } else if (window.location.pathname !== target) {
-      window.history.pushState({}, '', target);
+      window.history.pushState({}, '', target + (/^#(?:invite|verify|reset)=/.test(window.location.hash) ? window.location.hash : ''));
     }
   }, [view, selectedUniversity]);
 
   // Active countdown timer state for Hero Stat Card
   const [nearestCountdown, setNearestCountdown] = useState<{ days: number; hours: number; minutes: number; seconds: number } | null>(null);
 
-  // Restore and observe the secure Supabase session.
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      setCurrentUser(data.user ? mapAuthUser(data.user) : null);
-    });
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setCurrentUser(session?.user ? mapAuthUser(session.user) : null);
-    });
-    return () => listener.subscription.unsubscribe();
+    let active = true;
+    loadSession().then(user => {
+      if (active && !sessionChanged.current) setCurrentUser(user);
+    }).catch(console.error);
+    return () => { active = false; };
   }, []);
 
   // Nearest deadline live ticker
   useEffect(() => {
     const updateCountdown = () => {
-      const targetDate = new Date(UPCOMING_DEADLINES[0].date).getTime();
-      const diff = targetDate - Date.now();
-      if (diff > 0) {
+      const now = Date.now();
+      const targetDate = Math.min(...UPCOMING_DEADLINES.map(item => Date.parse(item.date)).filter(date => date > now));
+      const diff = targetDate - now;
+      if (Number.isFinite(diff) && diff > 0) {
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
         const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
         const minutes = Math.floor((diff / 1000 / 60) % 60);
         const seconds = Math.floor((diff / 1000) % 60);
         setNearestCountdown({ days, hours, minutes, seconds });
+      } else {
+        setNearestCountdown(null);
       }
     };
 
@@ -156,25 +170,28 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const titles: Record<ViewState, string> = {
-      home: 'Bagdar Asia — Asian University Admissions',
-      universities: 'Explore Asian Universities | Bagdar Asia',
-      'university-detail': selectedUniversity ? `${selectedUniversity.name} Admissions | Bagdar Asia` : 'University Admissions | Bagdar Asia',
-      countries: 'Study Destinations in Asia | Bagdar Asia',
-      'grounding-intel': 'Admissions Research | Bagdar Asia',
-      planner: 'Application Strategy Planner | Bagdar Asia',
-      'essay-ai': 'Admissions Essay Assistant | Bagdar Asia',
-      deadlines: 'University Application Deadlines | Bagdar Asia',
-      profile: 'Applicant Profile | Bagdar Asia',
-      applications: 'Application Hub | Bagdar Asia',
-      admin: 'Administration | Bagdar Asia',
+      home: t('Admissions Portal'),
+      universities: t('60 Universities'),
+      'university-detail': t('Admissions at {name}', { name: selectedUniversity?.name || 'Bagdar Asia' }),
+      countries: t('Explore by Country'),
+      'grounding-intel': t('Live Intel'),
+      planner: t('Strategy Planner'),
+      'essay-ai': t('Essay AI'),
+      deadlines: t('Live Deadlines'),
+      profile: t('Applicant Profile'),
+      applications: t('Application Hub'),
+      admin: t('Admin Dashboard'),
     };
-    document.title = titles[view];
+    document.title = titles[view] + ' | Bagdar Asia';
     const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
     if (canonical) canonical.href = `https://bagdar-asia.vercel.app${window.location.pathname}`;
-  }, [view, selectedUniversity]);
+  }, [view, selectedUniversity, locale]);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    try { await signOut(); } catch (error) {
+      window.alert(t(error instanceof Error ? error.message : 'Could not sign out'));
+      return;
+    }
     setCurrentUser(null);
     if (view === 'admin') {
       setView('home');
@@ -204,94 +221,97 @@ const App: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-[#0B0E14] text-white font-['Plus_Jakarta_Sans']">
       {/* Top Application Header */}
       <header className="sticky top-0 z-40 bg-[#0B0E14]/80 backdrop-blur-xl border-b border-gray-800/80 px-4 sm:px-8 py-3.5 transition-all">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
           {/* Logo & Brand */}
           <div 
             onClick={() => setView('home')} 
-            className="flex items-center gap-3 cursor-pointer group select-none"
+            className="flex min-w-0 items-center gap-2 sm:gap-3 cursor-pointer group select-none"
           >
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center text-black font-black shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 shrink-0 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center text-black font-black shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
               <GraduationCap size={22} className="text-black" />
             </div>
             <div>
-              <div className="text-xl font-black tracking-tight leading-none text-white group-hover:text-emerald-400 transition-colors">
+              <div className="text-base sm:text-xl font-black tracking-tight leading-none text-white group-hover:text-emerald-400 transition-colors">
                 Bagdar Asia
               </div>
-              <div className="text-[10px] uppercase font-extrabold tracking-widest text-emerald-400/90 mt-0.5">
-                Admissions Portal
+              <div className="text-[9px] sm:text-[10px] uppercase font-extrabold sm:tracking-widest text-emerald-400/90 mt-0.5">
+                {t("Admissions Portal")}
               </div>
             </div>
           </div>
 
           {/* Quick Header Nav Links (Desktop) */}
-          <nav className="hidden lg:flex items-center gap-6 text-xs font-bold uppercase tracking-wider text-gray-400">
+          <nav className="hidden xl:flex items-center gap-4 text-xs font-bold uppercase tracking-wider text-gray-400">
             <button 
               onClick={() => { setCountryFilter(undefined); setView('universities'); }}
               className={`hover:text-white transition-colors ${view === 'universities' ? 'text-emerald-400' : ''}`}
             >
-              60 Universities
+              {t("60 Universities")}
             </button>
             <button 
               onClick={() => setView('countries')}
               className={`hover:text-white transition-colors ${view === 'countries' ? 'text-emerald-400' : ''}`}
             >
-              12 Countries
+              {t("12 Countries")}
             </button>
             <button 
               onClick={() => setView('grounding-intel')}
               className={`hover:text-white transition-colors flex items-center gap-1.5 ${view === 'grounding-intel' ? 'text-emerald-400' : ''}`}
             >
               <Sparkles size={13} className="text-emerald-400" />
-              Live Intel
+              {t("Live Intel")}
             </button>
             <button 
               onClick={() => setView('planner')}
               className={`hover:text-white transition-colors ${view === 'planner' ? 'text-emerald-400' : ''}`}
             >
-              Strategy
+              {t("Strategy")}
             </button>
             <button 
               onClick={() => setView('essay-ai')}
               className={`hover:text-white transition-colors ${view === 'essay-ai' ? 'text-emerald-400' : ''}`}
             >
-              Essay AI
+              {t("Essay AI")}
             </button>
             <button 
               onClick={() => setView('deadlines')}
               className={`hover:text-white transition-colors ${view === 'deadlines' ? 'text-emerald-400' : ''}`}
             >
-              Deadlines
+              {t("Deadlines")}
             </button>
             <button
               onClick={() => setView('applications')}
               className={`hover:text-white transition-colors ${view === 'applications' ? 'text-emerald-400' : ''}`}
             >
-              My Applications
+              {t("My Applications")}
             </button>
           </nav>
 
           {/* User Auth Section */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <LanguageSwitcher />
             {currentUser ? (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1 sm:gap-3">
                 {/* Admin Console Shortcut */}
                 {isAdmin && (
                   <button
                     onClick={() => setView('admin')}
+                    aria-label={t('Admin Dashboard')}
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all ${
                       view === 'admin' 
                         ? 'bg-amber-400 text-black shadow-lg shadow-amber-400/20' 
                         : 'bg-amber-400/10 text-amber-300 border border-amber-400/30 hover:bg-amber-400 hover:text-black'
                     }`}
                   >
-                    <ShieldCheck size={14} /> Admin
+                    <ShieldCheck size={14} /> <span className="hidden sm:inline">{t("Admin")}</span>
                   </button>
                 )}
 
                 {/* Profile Badge */}
-                <div 
+                <button type="button"
                   onClick={() => setView('profile')}
-                  className="flex items-center gap-2.5 bg-[#161B22] border border-gray-800 hover:border-emerald-500/40 rounded-2xl py-1.5 pl-2.5 pr-4 cursor-pointer transition-all"
+                  aria-label={t('Applicant Profile')}
+                  className="flex items-center gap-2.5 bg-[#161B22] border border-gray-800 hover:border-emerald-500/40 rounded-2xl p-1.5 sm:pl-2.5 sm:pr-4 cursor-pointer transition-all"
                 >
                   <div className="w-7 h-7 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs uppercase">
                     {currentUser.name.charAt(0)}
@@ -301,15 +321,15 @@ const App: React.FC = () => {
                       {currentUser.name}
                     </div>
                     <div className="text-[10px] text-gray-400 font-medium leading-none mt-1">
-                      {currentUser.targetCountry}
+                      {t(currentUser.targetCountry)}
                     </div>
                   </div>
-                </div>
+                </button>
 
                 {/* Logout Button */}
                 <button
                   onClick={handleLogout}
-                  title="Sign Out"
+                  title={t("Sign Out")}
                   className="p-2 text-gray-400 hover:text-red-400 hover:bg-white/5 rounded-xl transition-colors"
                 >
                   <LogOut size={16} />
@@ -318,9 +338,10 @@ const App: React.FC = () => {
             ) : (
               <button
                 onClick={() => setAuthModalOpen(true)}
-                className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-md shadow-emerald-500/10 flex items-center gap-2"
+                aria-label={t("Sign In / Register")}
+                className="min-h-11 px-3 sm:px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-md shadow-emerald-500/10 flex items-center gap-2"
               >
-                <LogIn size={15} /> Sign In / Register
+                <LogIn size={15} /> <span className="hidden sm:inline">{t("Sign In / Register")}</span>
               </button>
             )}
           </div>
@@ -332,14 +353,14 @@ const App: React.FC = () => {
         <div className="pt-20 pb-12 px-4 text-center animate-in fade-in duration-1000">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-black uppercase tracking-wider mb-6">
-            <Globe size={14} /> Premier Asian Higher Education Gateway
+            <Globe size={14} /> {t("Premier Asian Higher Education Gateway")}
           </div>
 
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-4 text-white">
             Bagdar Asia
           </h1>
           <p className="text-gray-400 text-lg md:text-xl font-medium mb-12 max-w-3xl mx-auto">
-            Your Gateway to 60 Premier Asian Universities across 12 Countries
+            {t("Your Gateway to 60 Premier Asian Universities across 12 Countries")}
           </p>
 
           {/* Quick Search */}
@@ -349,7 +370,7 @@ const App: React.FC = () => {
               type="text" 
               value={heroSearch}
               onChange={e => setHeroSearch(e.target.value)}
-              placeholder="Search by major, institution (e.g. SNU, NUS), or scholarship..."
+              placeholder={t("Search by major, institution (e.g. SNU, NUS), or scholarship...")}
               className="w-full bg-[#1A1F26] border border-gray-800 rounded-3xl py-6 pl-16 pr-8 text-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all text-white placeholder-gray-500 shadow-2xl"
             />
           </form>
@@ -365,8 +386,8 @@ const App: React.FC = () => {
                 <TrendingUp size={28} />
               </div>
               <div>
-                <span className="text-2xl font-black text-white block">60 Universities</span>
-                <span className="text-xs text-gray-500 font-semibold mt-1 block">Curated University Directory</span>
+                <span className="text-2xl font-black text-white block">{t("60 Universities")}</span>
+                <span className="text-xs text-gray-500 font-semibold mt-1 block">{t("Curated University Directory")}</span>
               </div>
             </div>
 
@@ -379,8 +400,8 @@ const App: React.FC = () => {
                 <MapPin size={28} />
               </div>
               <div>
-                <span className="text-2xl font-black text-white block">12 Asian Countries</span>
-                <span className="text-xs text-gray-500 font-semibold mt-1 block">Regional Academic Hubs</span>
+                <span className="text-2xl font-black text-white block">{t("12 Asian Countries")}</span>
+                <span className="text-xs text-gray-500 font-semibold mt-1 block">{t("Regional Academic Hubs")}</span>
               </div>
             </div>
 
@@ -393,13 +414,13 @@ const App: React.FC = () => {
                 <Clock size={28} />
               </div>
               <div>
-                <span className="text-2xl font-black text-white block">Live Deadlines</span>
+                <span className="text-2xl font-black text-white block">{t("Live Deadlines")}</span>
                 {nearestCountdown ? (
                   <span className="text-xs text-emerald-400 font-mono font-bold mt-1 block">
-                    Next: {nearestCountdown.days}d {nearestCountdown.hours}h {nearestCountdown.minutes}m {nearestCountdown.seconds}s
+                    {t("Next:")} {nearestCountdown.days}{t("d")} {nearestCountdown.hours}{t("h")} {nearestCountdown.minutes}{t("m")} {nearestCountdown.seconds}{t("s")}
                   </span>
                 ) : (
-                  <span className="text-xs text-gray-500 font-semibold mt-1 block">Active Admission Clocks</span>
+                  <span className="text-xs text-gray-500 font-semibold mt-1 block">{t("No upcoming verified deadlines are listed.")}</span>
                 )}
               </div>
             </div>
@@ -414,17 +435,17 @@ const App: React.FC = () => {
               <div>
                 <div className="flex items-center gap-2">
                   <span className="px-3 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-wider">
-                    Google Search Data
+                    {t("Google Search Data")}
                   </span>
                   <span className="px-3 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-wider">
-                    Google Maps Data
+                    {t("Google Maps Data")}
                   </span>
                 </div>
                 <h3 className="text-xl md:text-2xl font-black text-white mt-2">
-                  Live Grounded Admissions & Campus Geography
+                  {t("Live Grounded Admissions & Campus Geography")}
                 </h3>
                 <p className="text-sm text-gray-400 mt-1 max-w-xl font-medium">
-                  Research current admissions, scholarships, campus transit, and student housing with source links and location context.
+                  {t("Research current admissions, scholarships, campus transit, and student housing with source links and location context.")}
                 </p>
               </div>
             </div>
@@ -432,17 +453,17 @@ const App: React.FC = () => {
               onClick={() => setView('grounding-intel')}
               className="px-6 py-4 rounded-2xl bg-gradient-to-r from-blue-500 to-emerald-400 hover:from-blue-400 hover:to-emerald-300 text-black font-black text-xs uppercase tracking-wider shadow-lg shadow-emerald-500/20 flex items-center gap-2 shrink-0 transition-all hover:scale-105"
             >
-              <Compass size={16} /> Launch Live Intel
+              <Compass size={16} /> {t("Launch Live Intel")}
             </button>
           </div>
           
-          <h2 className="text-3xl font-bold mb-12 text-white">Explore by Country</h2>
+          <h2 className="text-3xl font-bold mb-12 text-white">{t("Explore by Country")}</h2>
         </div>
       )}
 
       {/* Main Content Area with Mandatory pb-32 to prevent bottom navigation bar overlap */}
-      <main className="flex-1 pb-32">
-        <Suspense fallback={<div className="py-24 text-center text-sm font-bold text-gray-400">Loading workspace…</div>}>
+      <main className="flex-1 pb-40 sm:pb-32">
+        <Suspense fallback={<div className="py-24 text-center text-sm font-bold text-gray-400">{t("Loading your workspace…")}</div>}>
         {view === 'home' && <CountrySelector onSelectCountry={navigateToCountry} />}
         {view === 'countries' && (
           <CountrySelector 
@@ -506,11 +527,11 @@ const App: React.FC = () => {
 
       {/* Floating Bottom Navigation Bar */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-4 w-full max-w-3xl">
-        <div className="glass-nav rounded-[2.5rem] px-5 py-3 flex items-center justify-between shadow-2xl border border-white/10 bg-[#161B22]/90 backdrop-blur-xl">
+        <div className="glass-nav rounded-[2.5rem] px-3 sm:px-5 py-3 grid grid-cols-5 justify-items-center sm:flex sm:items-center sm:justify-between shadow-2xl border border-white/10 bg-[#161B22]/90 backdrop-blur-xl">
           <button 
             onClick={() => setView('home')} 
             className={`p-3 rounded-2xl transition-all ${view === 'home' ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/20' : 'text-gray-400 hover:text-white'}`}
-            title="Home"
+            title={t("Home")}
           >
             <Home size={20} />
           </button>
@@ -518,7 +539,7 @@ const App: React.FC = () => {
           <button 
             onClick={() => { setCountryFilter(undefined); setView('universities'); }} 
             className={`p-3 rounded-2xl transition-all ${view === 'universities' ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/20' : 'text-gray-400 hover:text-white'}`}
-            title="60 Universities"
+            title={t("60 Universities")}
           >
             <GraduationCap size={20} />
           </button>
@@ -526,7 +547,7 @@ const App: React.FC = () => {
           <button 
             onClick={() => setView('grounding-intel')} 
             className={`p-3 rounded-2xl transition-all ${view === 'grounding-intel' ? 'bg-blue-500 text-black shadow-lg shadow-blue-500/20' : 'text-gray-400 hover:text-white'}`}
-            title="Live Intel (Search & Maps)"
+            title={t("Live Intel (Search & Maps)")}
           >
             <Compass size={20} />
           </button>
@@ -534,7 +555,7 @@ const App: React.FC = () => {
           <button 
             onClick={() => setView('planner')} 
             className={`p-3 rounded-2xl transition-all ${view === 'planner' ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/20' : 'text-gray-400 hover:text-white'}`}
-            title="Strategy Planner"
+            title={t("Strategy Planner")}
           >
             <ClipboardList size={20} />
           </button>
@@ -542,7 +563,7 @@ const App: React.FC = () => {
           <button
             onClick={() => setView('applications')}
             className={`p-3 rounded-2xl transition-all ${view === 'applications' ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/20' : 'text-gray-400 hover:text-white'}`}
-            title="Application Hub"
+            title={t("Application Hub")}
           >
             <PanelsTopLeft size={20} />
           </button>
@@ -550,7 +571,7 @@ const App: React.FC = () => {
           <button 
             onClick={() => setView('essay-ai')} 
             className={`p-3 rounded-2xl transition-all ${view === 'essay-ai' ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/20' : 'text-gray-400 hover:text-white'}`}
-            title="Essay AI"
+            title={t("Essay AI")}
           >
             <Sparkles size={20} />
           </button>
@@ -558,7 +579,7 @@ const App: React.FC = () => {
           <button 
             onClick={() => setView('deadlines')} 
             className={`p-3 rounded-2xl transition-all ${view === 'deadlines' ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/20' : 'text-gray-400 hover:text-white'}`}
-            title="Live Deadlines"
+            title={t("Live Deadlines")}
           >
             <Clock size={20} />
           </button>
@@ -566,7 +587,7 @@ const App: React.FC = () => {
           <button 
             onClick={() => setView('profile')} 
             className={`p-3 rounded-2xl transition-all ${view === 'profile' ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/20' : 'text-gray-400 hover:text-white'}`}
-            title="Applicant Profile"
+            title={t("Applicant Profile")}
           >
             <UserCircle size={20} />
           </button>
@@ -576,7 +597,7 @@ const App: React.FC = () => {
             <button 
               onClick={() => setView('admin')} 
               className={`p-3 rounded-2xl transition-all ${view === 'admin' ? 'bg-amber-400 text-black shadow-lg shadow-amber-400/20' : 'text-amber-400/80 hover:text-amber-300'}`}
-              title="Admin Dashboard"
+              title={t("Admin Dashboard")}
             >
               <ShieldCheck size={20} />
             </button>
@@ -587,7 +608,7 @@ const App: React.FC = () => {
             <button 
               onClick={() => setAuthModalOpen(true)} 
               className="p-3 rounded-2xl text-emerald-400 hover:text-white hover:bg-emerald-500/10 transition-all"
-              title="Sign In / Register"
+              title={t("Sign In / Register")}
             >
               <LogIn size={20} />
             </button>
@@ -597,9 +618,13 @@ const App: React.FC = () => {
 
       {/* Authentication & Registration Modal */}
       <AuthModal
+        linkHash={inviteHash}
+        initialTab={inviteHash.startsWith('#invite=') ? 'register' : 'signin'}
         isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
         onLoginSuccess={(user) => {
+          sessionChanged.current = true;
+          setInviteHash(window.location.hash);
           setCurrentUser(user);
           if (user.role === 'admin') {
             setView('admin');

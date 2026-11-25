@@ -1,3 +1,4 @@
+import { useLocale } from "../i18n/locale";
 import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowRight, ClipboardList, FileText, LogIn, Save, Trash2 } from 'lucide-react';
 import { ASIA_COUNTRIES } from '../constants';
@@ -20,6 +21,7 @@ const STATUS_OPTIONS: { value: ApplicationStatus; label: string }[] = [
 ];
 
 const ApplicationHub: React.FC<Props> = ({ currentUser, onOpenAuth, onSelectUniversity }) => {
+  const { t } = useLocale();
   const [applications, setApplications] = useState<UniversityApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState<string | null>(null);
@@ -59,10 +61,10 @@ const ApplicationHub: React.FC<Props> = ({ currentUser, onOpenAuth, onSelectUniv
       <div className="mx-auto max-w-2xl px-4 py-24 text-center">
         <div className="rounded-[3rem] border border-emerald-500/20 bg-[#161B22] p-12">
           <ClipboardList className="mx-auto mb-5 text-emerald-400" size={48} />
-          <h1 className="text-3xl font-black">Your Application Hub</h1>
-          <p className="mt-3 text-sm text-gray-400">Sign in to save universities and track every application stage across devices.</p>
+          <h1 className="text-3xl font-black">{t("Your Application Hub")}</h1>
+          <p className="mt-3 text-sm text-gray-400">{t("Sign in to save universities and track every application stage across devices.")}</p>
           <button onClick={onOpenAuth} className="mt-8 inline-flex items-center gap-2 rounded-2xl bg-emerald-500 px-7 py-4 text-sm font-black text-black">
-            <LogIn size={17} /> Sign In
+            <LogIn size={17} /> {t("Sign In")}
           </button>
         </div>
       </div>
@@ -73,23 +75,23 @@ const ApplicationHub: React.FC<Props> = ({ currentUser, onOpenAuth, onSelectUniv
     <div className="mx-auto max-w-7xl px-4 py-12">
       <div className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
-          <span className="text-xs font-black uppercase tracking-[0.25em] text-emerald-400">Personal workspace</span>
-          <h1 className="mt-2 text-4xl font-black">Application Hub</h1>
-          <p className="mt-2 text-gray-400">Move each university from research to final decision.</p>
+          <span className="text-xs font-black uppercase tracking-[0.25em] text-emerald-400">{t("Personal workspace")}</span>
+          <h1 className="mt-2 text-4xl font-black">{t("Application Hub")}</h1>
+          <p className="mt-2 text-gray-400">{t("Move each university from research to final decision.")}</p>
         </div>
         <div className="rounded-2xl border border-gray-800 bg-[#1A1F26] px-5 py-3 text-sm font-bold text-gray-300">
-          {applications.length} active application{applications.length === 1 ? '' : 's'}
+          {t('Active applications')} · {applications.length}
         </div>
       </div>
 
-      {message && <div className="mb-6 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-300">{message}</div>}
+      {message && <div className="mb-6 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-300">{t(message)}</div>}
       {loading ? (
-        <div className="rounded-[2rem] border border-gray-800 bg-[#1A1F26] p-10 text-center text-gray-400">Loading your workspace…</div>
+        <div className="rounded-[2rem] border border-gray-800 bg-[#1A1F26] p-10 text-center text-gray-400">{t("Loading your workspace…")}</div>
       ) : applications.length === 0 ? (
         <div className="rounded-[2.5rem] border border-dashed border-gray-700 bg-[#161B22] p-12 text-center">
           <FileText className="mx-auto mb-4 text-gray-600" size={42} />
-          <h2 className="text-xl font-black">Your shortlist is empty</h2>
-          <p className="mt-2 text-sm text-gray-500">Open the university catalog and tap the heart on institutions you want to track.</p>
+          <h2 className="text-xl font-black">{t("Your shortlist is empty")}</h2>
+          <p className="mt-2 text-sm text-gray-500">{t("Open the university catalog and tap the heart on institutions you want to track.")}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -101,11 +103,11 @@ const ApplicationHub: React.FC<Props> = ({ currentUser, onOpenAuth, onSelectUniv
                 <div className="flex gap-5 p-6">
                   <img src={university.image} alt="" loading="lazy" decoding="async" width="96" height="96" className="h-24 w-24 rounded-2xl object-cover" />
                   <div className="min-w-0 flex-1">
-                    <div className="text-xs font-black uppercase tracking-wider text-emerald-400">Reference rank #{university.ranking}</div>
+                    <div className="text-xs font-black uppercase tracking-wider text-emerald-400">{t("Reference rank #")}{university.ranking}</div>
                     <h2 className="mt-1 text-xl font-black">{university.name}</h2>
-                    <p className="mt-1 text-xs text-gray-500">{university.location}</p>
+                    <p className="mt-1 text-xs text-gray-500">{t(university.location)}</p>
                     <button onClick={() => onSelectUniversity(university)} className="mt-3 flex items-center gap-1 text-xs font-bold text-emerald-400 hover:text-white">
-                      View requirements <ArrowRight size={13} />
+                      {t("View requirements")} <ArrowRight size={13} />
                     </button>
                   </div>
                 </div>
@@ -115,17 +117,17 @@ const ApplicationHub: React.FC<Props> = ({ currentUser, onOpenAuth, onSelectUniv
                     onChange={event => changeStatus(application, event.target.value as ApplicationStatus)}
                     className="w-full rounded-2xl border border-gray-700 bg-[#0B0E14] px-4 py-3 text-sm font-bold text-white outline-none focus:border-emerald-500"
                   >
-                    {STATUS_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+                    {STATUS_OPTIONS.map(option => <option key={option.value} value={option.value}>{t(option.label)}</option>)}
                   </select>
                   <textarea
                     defaultValue={application.notes}
                     onBlur={event => saveNotes(application, event.target.value)}
-                    placeholder="Application notes, missing documents, interview details…"
+                    placeholder={t("Application notes, missing documents, interview details…")}
                     className="min-h-24 w-full rounded-2xl border border-gray-700 bg-[#0B0E14] p-4 text-sm text-white outline-none focus:border-emerald-500"
                   />
                   <div className="flex items-center justify-between text-xs text-gray-500">
-                    <span className="flex items-center gap-1.5"><Save size={13} /> Notes save automatically</span>
-                    <button onClick={() => remove(application)} className="rounded-xl p-2 text-gray-600 hover:bg-red-500/10 hover:text-red-400" aria-label={`Remove ${university.name}`}>
+                    <span className="flex items-center gap-1.5"><Save size={13} /> {t("Notes save automatically")}</span>
+                    <button onClick={() => remove(application)} className="rounded-xl p-2 text-gray-600 hover:bg-red-500/10 hover:text-red-400" aria-label={t('Remove {name}', { name: university.name })}>
                       <Trash2 size={16} />
                     </button>
                   </div>

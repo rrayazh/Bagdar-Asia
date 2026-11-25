@@ -1,11 +1,15 @@
-import type { User as SupabaseUser } from '@supabase/supabase-js';
+import type { Locale } from '../i18n/locale';
 import type { User } from '../types';
+import { request } from './request';
 
-export const mapAuthUser = (user: SupabaseUser): User => ({
-  id: user.id,
-  name: String(user.user_metadata?.full_name || user.email?.split('@')[0] || 'Student'),
-  email: user.email || '',
-  targetCountry: String(user.user_metadata?.target_country || 'Not selected'),
-  registeredAt: user.created_at?.split('T')[0] || new Date().toISOString().split('T')[0],
-  role: user.app_metadata?.role === 'admin' ? 'admin' : 'user',
-});
+export const currentUser = () => request<User | null>('/api/auth');
+export const signOut = () => request('/api/auth', 'DELETE');
+export const signIn = (email: string, password: string) => request<User>('/api/auth', 'POST', { action: 'signin', email, password });
+export const register = (email: string, password: string, name: string, targetCountry: string, invitation: string | undefined, locale: Locale) =>
+  request<{ verificationRequired: true }>('/api/auth', 'POST', { action: 'register', email, password, name, targetCountry, invitation, locale });
+
+export const requestAccountEmail = (action: 'forgot' | 'resend', email: string, locale: Locale) =>
+  request('/api/auth', 'POST', { action, email, locale });
+
+export const completeAccountLink = (action: 'verify' | 'reset', token: string, password: string) =>
+  request('/api/auth', 'POST', { action, token, password });

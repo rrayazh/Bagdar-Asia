@@ -1,32 +1,17 @@
-export type AiProvider = 'gemini' | 'openai';
+import { responseLanguage, type Locale } from '../i18n/locale';
 
-export class AiService {
-  private provider: AiProvider = (localStorage.getItem('ai_provider') as AiProvider) || 'openai';
+import type { EssayFeedback } from '../types';
 
-  constructor() {
-    // Ensure the default provider is saved if it's the first run
-    if (!localStorage.getItem('ai_provider')) {
-      localStorage.setItem('ai_provider', 'openai');
-    }
-  }
+type Feature = 'essay_feedback' | 'essay_draft' | 'campus_simulation' | 'skills';
 
-  setProvider(p: AiProvider) {
-    this.provider = p;
-    localStorage.setItem('ai_provider', p);
-  }
-
-  private async callAi(prompt: string, jsonMode: boolean = false) {
-    const { data: sessionData } = await supabase.auth.getSession();
-    const accessToken = sessionData.session?.access_token;
-    if (!accessToken) throw new Error('Please sign in to use AI tools');
-
+class AiService {
+  private async callAi(feature: Feature, prompt: string, locale: Locale = 'en') {
     const response = await fetch('/api/ai', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
       },
-      body: JSON.stringify({ prompt, jsonMode, provider: this.provider })
+      body: JSON.stringify({ feature, prompt, locale })
     });
 
     if (!response.ok) {
@@ -51,25 +36,34 @@ export class AiService {
       User Data:
       ${dataString}`;
 
-    return JSON.parse(await this.callAi(prompt, true));
+    return JSON.parse(await this.callAi('skills', prompt));
   }
 
-  async getEssayFeedback(essay: string, targetUni: string) {
-    const prompt = `Review the following admission essay for ${targetUni}. Provide feedback in JSON format with keys: score (number 0-100), grammar (string), narrative (string), strategicFit (string), suggestions (array of strings).
+  async getEssayFeedback(essay: string, targetUni: string, locale: Locale = 'en') {
+    const prompt = `Review the following admission essay for ${targetUni}. Provide feedback in JSON format with keys: score (number 0-100), grammar (string), narrative (string), strategicFit (string), suggestions (array of strings). Write the feedback in ${responseLanguage[locale]}, keeping the JSON keys unchanged.
       Essay: "${essay}"`;
 
-    return JSON.parse(await this.callAi(prompt, true));
+    const feedback: Partial<EssayFeedback> | null = JSON.parse(await this.callAi('essay_feedback', prompt, locale));
+    if (!feedback || typeof feedback.score !== 'number' || feedback.score < 0 || feedback.score > 100 ||
+        typeof feedback.grammar !== 'string' || typeof feedback.narrative !== 'string' ||
+        typeof feedback.strategicFit !== 'string' || !Array.isArray(feedback.suggestions) ||
+        !feedback.suggestions.every(item => typeof item === 'string')) {
+      throw new Error('AI provider request failed');
+    }
+    return feedback as EssayFeedback;
   }
 
-  async generateEssayDraft(universityName: string, selectedFacts: string[], userProfile: string, skills: any) {
+  async generateEssayDraft(universityName: string, selectedFacts: string[], userProfile: string, skills: any, locale: Locale = 'en') {
     const prompt = `Draft a professional motivational essay paragraph for ${universityName}. 
       User Profile: "${userProfile}".
       Measured Skills (0-100): Analytical: ${skills.analytical}, Creative: ${skills.creative}, Leadership: ${skills.leadership}, Vision: ${skills.vision}.
-      Facts to weave in: ${selectedFacts.join(', ')}.`;
+      Write the draft in ${responseLanguage[locale]}. Facts to weave in: ${selectedFacts.join(', ')}.`;
 
-    return await this.callAi(prompt);
+    return this.callAi('essay_draft', prompt, locale);
+  }
+  summarizeCampusDay(prompt: string, locale: Locale) {
+    return this.callAi('campus_simulation', prompt, locale);
   }
 }
 
 export const aiService = new AiService();
-import { supabase } from './supabase';
