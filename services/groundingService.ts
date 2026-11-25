@@ -115,6 +115,10 @@ export class GroundingService {
     const locale = context?.locale || 'en';
     const targetUni = context?.universityName || 'Asian Universities';
     const targetLoc = context?.location || 'Asia';
+    if (!localStorage.getItem('gemini_api_key') &&
+        !(typeof process !== 'undefined' && (process.env?.GEMINI_API_KEY || process.env?.API_KEY))) {
+      return this.searchFallback(query, context?.universityName, locale);
+    }
 
     const systemPrompt = `You are the lead admissions researcher for Bagdar Asia.
 Your task is to provide up-to-date, accurate, grounded information for international students applying to ${targetUni} in ${targetLoc}.
@@ -157,6 +161,10 @@ Formatting: Use structured Markdown with clear headings, bullet points, and high
         }
       }
 
+      if (!response.text?.trim() || !sources.length) {
+        return this.searchFallback(query, context?.universityName, locale);
+      }
+
       return {
         text,
         sources,
@@ -166,7 +174,7 @@ Formatting: Use structured Markdown with clear headings, bullet points, and high
       };
     } catch (err: any) {
       console.warn("Search Grounding API encountered an error, activating resilient grounded intelligence:", err);
-      return this.searchFallback(targetUni, locale);
+      return this.searchFallback(query, context?.universityName, locale);
     }
   }
 
@@ -270,11 +278,29 @@ Provide a concise, helpful Markdown breakdown in ${responseLanguage[locale]}.`;
     }
   }
 
-  private searchFallback(name: string, locale: Locale): GroundingResult {
-    const university = ASIA_COUNTRIES.flatMap(country => country.universities).find(item => item.name === name);
+  private searchFallback(query: string, name: string | undefined, locale: Locale): GroundingResult {
+    const universities = ASIA_COUNTRIES.flatMap(country => country.universities);
+    const normalizedQuery = query.trim().toLocaleLowerCase(locale);
+    const matches = universities.filter(university => {
+      const names = [university.name, translate(locale, university.name)];
+      return names.some(value => {
+        const normalizedName = value.toLocaleLowerCase(locale);
+        return normalizedQuery.includes(normalizedName) ||
+          (normalizedQuery.length >= 3 && normalizedName.includes(normalizedQuery));
+      }) || (normalizedQuery.length >= 3 && university.location.toLocaleLowerCase(locale).includes(normalizedQuery));
+    });
+    const selected = name ? universities.find(university => university.name === name) : undefined;
+    const sources: GroundingSource[] = (selected ? [selected] : matches.slice(0, 6)).map(university => ({
+      title: university.name,
+      uri: university.website,
+      type: 'web',
+    }));
+    const search = new URL('https://www.google.com/search');
+    search.searchParams.set('q', [name, query.trim(), 'university admissions'].filter(Boolean).join(' '));
+    sources.push({ title: 'Search on Google', uri: search.toString(), type: 'web' });
     return {
-      text: translate(locale, 'Live search is unavailable. Check current admissions information on the university’s official website.'),
-      sources: university ? [{ title: translate(locale, 'Official Portal'), uri: university.website, type: 'web' }] : [],
+      text: translate(locale, 'Open an official university website below or continue this query on Google.'),
+      sources,
       groundingType: 'search',
       timestamp: new Date().toLocaleTimeString(locale),
       fallback: true,

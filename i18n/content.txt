@@ -561,3 +561,7 @@ Add administrator|Әкімші қосу|Добавить администрат�
 Create administrator|Әкімші аккаунтын жасау|Создать администратора
 Administrator created.|Әкімші аккаунты жасалды.|Аккаунт администратора создан.
 Use at least 12 characters for the administrator password.|Әкімші құпиясөзі кемінде 12 таңбадан тұруы керек.|Пароль администратора должен содержать не менее 12 символов.
+
+Search links|Іздеу сілтемелері|Ссылки для поиска
+Search on Google|Google арқылы іздеу|Искать в Google
+Open an official university website below or continue this query on Google.|Төмендегі университеттің ресми сайтын ашыңыз немесе сұрауды Google арқылы жалғастырыңыз.|Откройте официальный сайт университета ниже или продолжите поиск в Google.

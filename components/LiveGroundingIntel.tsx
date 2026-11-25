@@ -69,8 +69,8 @@ export const LiveGroundingIntel: React.FC<Props> = ({
     );
   };
 
-  const executeGrounding = async (overridePrompt?: string) => {
-    const activePrompt = overridePrompt || query || (mode === 'search' ? searchPresetQueries[0].prompt : mapsPresetQueries[0].prompt);
+  const executeGrounding = async (overridePrompt?: string, university = selectedUni) => {
+    const activePrompt = overridePrompt || query.trim() || (mode === 'search' ? searchPresetQueries[0].prompt : mapsPresetQueries[0].prompt);
     setLoading(true);
     setResult(null);
 
@@ -78,16 +78,16 @@ export const LiveGroundingIntel: React.FC<Props> = ({
       if (mode === 'search') {
         const res = await groundingService.fetchSearchGroundedData(activePrompt, {
           locale,
-          universityName: selectedUni?.name,
-          location: selectedUni?.location
+          universityName: university?.name,
+          location: university?.location
         });
         setResult(res);
       } else {
         const res = await groundingService.fetchMapsGroundedData(activePrompt, {
-          universityId: selectedUni?.id,
+          universityId: university?.id,
           locale,
-          universityName: selectedUni?.name,
-          location: selectedUni?.location,
+          universityName: university?.name,
+          location: university?.location,
           userCoordinates: userLocation || undefined
         });
         setResult(res);
@@ -103,7 +103,7 @@ export const LiveGroundingIntel: React.FC<Props> = ({
   useEffect(() => {
     if (initialUniversity) {
       setSelectedUni(initialUniversity);
-      executeGrounding(mode === 'search' ? searchPresetQueries[0].prompt : mapsPresetQueries[0].prompt);
+      executeGrounding(mode === 'search' ? searchPresetQueries[0].prompt : mapsPresetQueries[0].prompt, initialUniversity);
     }
   }, [initialUniversity?.id, mode]);
 
@@ -304,7 +304,7 @@ export const LiveGroundingIntel: React.FC<Props> = ({
             <div className="flex items-center justify-between pb-4 mb-4 border-b border-gray-800/80">
               <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-400">
                 {result.groundingType === 'search' ? (
-                  <span className="text-blue-400 flex items-center gap-1.5"><Globe size={14} /> {t(result.fallback ? "Live lookup unavailable" : "Web Grounded Analysis")}</span>
+                  <span className="text-blue-400 flex items-center gap-1.5"><Globe size={14} /> {t(result.fallback ? "Search links" : "Web Grounded Analysis")}</span>
                 ) : (
                   <span className="text-emerald-400 flex items-center gap-1.5"><MapPin size={14} /> {t(result.fallback ? "Live lookup unavailable" : "Maps Grounded Analysis")}</span>
                 )}
