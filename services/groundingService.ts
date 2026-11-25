@@ -1,3 +1,4 @@
+import { request } from './request';
 import { ASIA_COUNTRIES } from '../constants';
 import { responseLanguage, translate, type Locale } from '../i18n/locale';
 import { GoogleGenAI } from "@google/genai";
@@ -113,67 +114,17 @@ export class GroundingService {
     context?: { universityName?: string; location?: string; locale?: Locale }
   ): Promise<GroundingResult> {
     const locale = context?.locale || 'en';
-    const targetUni = context?.universityName || 'Asian Universities';
-    const targetLoc = context?.location || 'Asia';
-    if (!localStorage.getItem('gemini_api_key') &&
-        !(typeof process !== 'undefined' && (process.env?.GEMINI_API_KEY || process.env?.API_KEY))) {
-      return this.searchFallback(query, context?.universityName, locale);
-    }
-
-    const systemPrompt = `You are the lead admissions researcher for Bagdar Asia.
-Your task is to provide up-to-date, accurate, grounded information for international students applying to ${targetUni} in ${targetLoc}.
-Focus on:
-1. Official application deadlines for the upcoming 2026/2027 intake cycles.
-2. Verified minimum entry requirements (IELTS/TOEFL, SAT/ACT/national tests, GPA standards).
-3. Government & institutional scholarships (quota, coverage, deadlines, stipend details).
-4. Recent visa or post-graduation work permit policies.
-
-Formatting: Use structured Markdown with clear headings, bullet points, and highlight verified dates. Write the answer in ${responseLanguage[locale]}.`;
-
-    const userPrompt = `${systemPrompt}\n\nCandidate Question: ${query}`;
-
+    const prompt = [context?.universityName, context?.location, query.trim()].filter(Boolean).join(' | ');
     try {
-      const ai = this.getClient();
-      const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
-        contents: userPrompt,
-        config: {
-          tools: [{ googleSearch: {} }]
-        }
+      const result = await request<Pick<GroundingResult, 'text' | 'sources' | 'searchQueries'>>('/api/ai', 'POST', {
+        feature: 'admissions_search', prompt, locale,
       });
-
-      const text = response.text || translate(locale, 'No information retrieved.');
-      const metadata = response.candidates?.[0]?.groundingMetadata;
-      const chunks = metadata?.groundingChunks || [];
-      const searchQueries = metadata?.webSearchQueries || [];
-
-      const sources: GroundingSource[] = [];
-      const seenUris = new Set<string>();
-
-      for (const chunk of chunks) {
-        if (chunk.web?.uri && !seenUris.has(chunk.web.uri)) {
-          seenUris.add(chunk.web.uri);
-          sources.push({
-            title: chunk.web.title || chunk.web.uri,
-            uri: chunk.web.uri,
-            type: 'web'
-          });
-        }
-      }
-
-      if (!response.text?.trim() || !sources.length) {
-        return this.searchFallback(query, context?.universityName, locale);
-      }
-
       return {
-        text,
-        sources,
-        searchQueries,
+        ...result,
         groundingType: 'search',
-        timestamp: new Date().toLocaleTimeString(locale)
+        timestamp: new Date().toLocaleTimeString(locale),
       };
-    } catch (err: any) {
-      console.warn("Search Grounding API encountered an error, activating resilient grounded intelligence:", err);
+    } catch {
       return this.searchFallback(query, context?.universityName, locale);
     }
   }
