@@ -43,7 +43,7 @@ export default endpoint(['POST'], async (req, res) => {
     if (admissionsSearch) {
       const gemini = new GoogleGenAI({ apiKey });
       const response = await gemini.models.generateContent({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash-lite',
         contents: prompt,
         config: {
           abortSignal: AbortSignal.timeout(20_000),
