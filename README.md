@@ -20,6 +20,8 @@ Calendar reminders are delivered by the calendar app after an applicant imports 
 
 This schema starts with an empty database. Existing accounts and records require a separate migration before moving a live installation.
 
+For Production, set `BAGDAR_DATABASE_URL` and `BAGDAR_DATABASE_AUTH_TOKEN` together to pin the app to the main Turso database across deploys. Preview environments can use the Turso integration's deployment-specific branches via `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`.
+
 
 ## Google sign-in
 

@@ -27,11 +27,14 @@ const schema = [
 let database: Promise<ReturnType<typeof createClient>> | undefined;
 export function db() {
   database ??= (async () => {
-    const url = process.env.TURSO_DATABASE_URL;
+    const stableUrl = process.env.BAGDAR_DATABASE_URL;
+    const stableToken = process.env.BAGDAR_DATABASE_AUTH_TOKEN;
+    if (Boolean(stableUrl) !== Boolean(stableToken)) throw new HttpError(503, 'Database is not configured');
+    const url = stableUrl || process.env.TURSO_DATABASE_URL;
     if (!url) throw new HttpError(503, 'Database is not configured');
     if (process.env.VERCEL && url.startsWith('file:')) throw new HttpError(503, 'Database is not configured');
     const factory = url.startsWith('file:') ? (await import('@libsql/client')).createClient : createClient;
-    const client = factory({ url, authToken: process.env.TURSO_AUTH_TOKEN });
+    const client = factory({ url, authToken: stableUrl ? stableToken : process.env.TURSO_AUTH_TOKEN });
     await client.batch(schema, 'write');
     return client;
   })().catch(error => { database = undefined; throw error; });
