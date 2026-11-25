@@ -56,7 +56,7 @@ const App: React.FC = () => {
   const [countryFilter, setCountryFilter] = useState<string | undefined>();
   const [userScores, setUserScores] = useState<SkillScores | null>(null);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [authModalOpen, setAuthModalOpen] = useState(() => /^#(?:invite|verify|reset)=/.test(window.location.hash));
+  const [authModalOpen, setAuthModalOpen] = useState(() => /^#(?:invite|verify|reset|google)=/.test(window.location.hash));
   const sessionChanged = useRef(false);
   const [inviteHash, setInviteHash] = useState(() => window.location.hash);
 
@@ -64,7 +64,7 @@ const App: React.FC = () => {
     const openInvitation = () => {
       const hash = window.location.hash;
       setInviteHash(hash);
-      if (/^#(?:invite|verify|reset)=/.test(hash)) setAuthModalOpen(true);
+      if (/^#(?:invite|verify|reset|google)=/.test(hash)) setAuthModalOpen(true);
     };
     window.addEventListener('hashchange', openInvitation);
     return () => window.removeEventListener('hashchange', openInvitation);
@@ -127,7 +127,7 @@ const App: React.FC = () => {
     if (handlingHistory.current) {
       handlingHistory.current = false;
     } else if (window.location.pathname !== target) {
-      window.history.pushState({}, '', target + (/^#(?:invite|verify|reset)=/.test(window.location.hash) ? window.location.hash : ''));
+      window.history.pushState({}, '', target + (/^#(?:invite|verify|reset|google)=/.test(window.location.hash) ? window.location.hash : ''));
     }
   }, [view, selectedUniversity]);
 

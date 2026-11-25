@@ -19,3 +19,10 @@ Set the server-only variables from `.env.example` in Vercel for the target envir
 Calendar reminders are delivered by the calendar app after an applicant imports the downloaded event.
 
 This schema starts with an empty database. Existing accounts and records require a separate migration before moving a live installation.
+
+
+## Google sign-in
+
+Create a Web application OAuth client in Google Auth Platform. For this production site, use the authorized redirect URI `https://bagdar-asia.vercel.app/api/google`. Add `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` and `APP_ORIGIN=https://bagdar-asia.vercel.app` to the Vercel Production environment, then redeploy. For local testing, use `APP_ORIGIN=http://localhost:3000` and separately authorize `http://localhost:3000/api/google`. Configure the Google app audience for the intended users.
+
+Google sign-in supports new Gmail and Google Workspace users. It uses the Google account's stable identity and stores profiles, sessions and application data in Turso. Existing password accounts and administrators keep their original sign-in method. Resend remains necessary for password-based registration and recovery.

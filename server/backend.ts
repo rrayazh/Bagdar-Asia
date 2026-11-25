@@ -11,6 +11,8 @@ const schema = [
   "CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, email TEXT UNIQUE NOT NULL, name TEXT NOT NULL, country TEXT NOT NULL, password TEXT, invitation TEXT, invitation_expires INTEGER, created TEXT NOT NULL, last_sign_in TEXT, admin_eligible INTEGER NOT NULL DEFAULT 0)",
   "CREATE TABLE IF NOT EXISTS sessions (token TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, expires INTEGER NOT NULL)",
   "CREATE TABLE IF NOT EXISTS verified_emails (user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE)",
+  "CREATE TABLE IF NOT EXISTS google_identities (subject TEXT PRIMARY KEY, user_id TEXT UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE)",
+  "CREATE TRIGGER IF NOT EXISTS remove_google_identity AFTER DELETE ON users BEGIN DELETE FROM google_identities WHERE user_id = OLD.id; END",
   "CREATE TABLE IF NOT EXISTS account_links (user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, kind TEXT NOT NULL, hash TEXT NOT NULL UNIQUE, expires INTEGER NOT NULL, PRIMARY KEY(user_id, kind))",
   "CREATE TRIGGER IF NOT EXISTS remove_account_email AFTER DELETE ON users BEGIN DELETE FROM verified_emails WHERE user_id = OLD.id; DELETE FROM account_links WHERE user_id = OLD.id; END",
   "CREATE INDEX IF NOT EXISTS sessions_user ON sessions(user_id)",
@@ -55,14 +57,15 @@ export function publicUser(row: Record<string, unknown>): User {
 }
 
 const cookie = 'bagdar_session';
-const duration = 60 * 60 * 24 * 14;
+export const SESSION_SECONDS = 60 * 60 * 24 * 14;
 export function sessionToken(req: any) {
   const token = String(req.headers.cookie || '').match(/(?:^|;\s*)bagdar_session=([a-zA-Z0-9_-]{43})(?:;|$)/)?.[1];
   return token ? digest(token) : undefined;
 }
-export function setCookie(req: any, res: any, value: string, maxAge = duration) {
+export function setCookie(req: any, res: any, value: string, maxAge = SESSION_SECONDS, extra: string[] = []) {
   const secure = process.env.VERCEL || req.headers['x-forwarded-proto'] === 'https' || req.socket?.encrypted;
-  res.setHeader('Set-Cookie', `${cookie}=${value}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${secure ? '; Secure' : ''}`);
+  const valueHeader = `${cookie}=${value}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${secure ? '; Secure' : ''}`;
+  res.setHeader('Set-Cookie', extra.length ? [...extra, valueHeader] : valueHeader);
 }
 export async function userFor(req: any) {
   const token = sessionToken(req);

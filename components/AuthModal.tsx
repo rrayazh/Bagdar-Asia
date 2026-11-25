@@ -3,6 +3,7 @@ import { useLocale } from "../i18n/locale";
 import React, { useState, useEffect } from 'react';
 import { X, Mail, Lock, User as UserIcon, Globe, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
 import { User } from '../types';
+import { request } from '../services/request';
 import { completeAccountLink, register, requestAccountEmail, signIn } from '../services/auth';
 
 interface Props {
@@ -41,11 +42,28 @@ const AuthModal: React.FC<Props> = ({ isOpen, onClose, onLoginSuccess, initialTa
   const linkAction = accountLink?.[1] as 'verify' | 'reset' | undefined;
   const action = linkAction || emailAction;
   const [error, setError] = useState<string | null>(null);
+  const [googleEnabled, setGoogleEnabled] = useState(false);
+  const googleError = ({
+    unavailable: 'Google sign-in is unavailable.',
+    failed: 'Google sign-in did not finish. Please try again.',
+    cancelled: 'Google sign-in was cancelled.',
+    existing: 'This email has an existing account. Use its original sign-in method.',
+    email: 'Use a Gmail or Google Workspace account to continue.',
+  } as Record<string, string>)[new URLSearchParams(linkHash.slice(1)).get('google') || ''];
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (isOpen && initialTab === 'register') setTab('register');
   }, [isOpen, initialTab]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    let active = true;
+    request<{ enabled: boolean }>('/api/google?status=1')
+      .then(result => { if (active) setGoogleEnabled(result.enabled); })
+      .catch(() => { if (active) setGoogleEnabled(false); });
+    return () => { active = false; };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -82,6 +100,7 @@ const AuthModal: React.FC<Props> = ({ isOpen, onClose, onLoginSuccess, initialTa
         setNotice('Check your inbox to verify your email.');
       } else {
         onLoginSuccess(await signIn(email, password));
+        if (googleError) clearLink();
         setNotice('');
         onClose();
       }
@@ -146,6 +165,18 @@ const AuthModal: React.FC<Props> = ({ isOpen, onClose, onLoginSuccess, initialTa
           </button>
         </div>}
 
+        {googleError && <p role="status" className="mb-4 text-sm text-amber-300">{t(googleError)}</p>}
+        {googleEnabled && !action && !linkHash.startsWith('#invite=') && (
+          <a href={'/api/google?locale=' + locale} className="mb-4 flex min-h-11 items-center justify-center gap-2 rounded-xl bg-white px-4 font-semibold text-[#202124] hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-400">
+            <svg aria-hidden="true" viewBox="0 0 48 48" width="18" height="18">
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5Z"/>
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.23 5.48-4.75 7.18l7.73 6C44.43 38.03 46.98 31.88 46.98 24.55Z"/>
+              <path fill="#FBBC05" d="M10.53 28.59a14.42 14.42 0 0 1 0-9.18l-7.98-6.19a24.06 24.06 0 0 0 0 21.56l7.98-6.19Z"/>
+              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.15 1.45-4.92 2.3-8.18 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.5 42.62 14.61 48 24 48Z"/>
+            </svg>
+            {t('Sign in with Google')}
+          </a>
+        )}
         {notice && <p role="status" className="mb-4 text-sm text-emerald-300">{t(notice)}</p>}
         {error && (
           <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center gap-3 text-red-400 text-xs font-semibold">

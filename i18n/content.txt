@@ -550,3 +550,9 @@ Check the official source for the closing time.|Өтінім қабылдауд�
 Official requirements|Ресми талаптар|Официальные требования
 Planning benchmarks|Жоспарлауға арналған көрсеткіштер|Ориентиры для планирования
 Read the university’s published admissions requirements|Университет жариялаған қабылдау талаптарын қараңыз|Посмотреть опубликованные университетом требования к поступлению
+Sign in with Google|Google арқылы кіру|Войти через Google
+Google sign-in is unavailable.|Google арқылы кіру қолжетімсіз.|Вход через Google недоступен.
+Google sign-in did not finish. Please try again.|Google арқылы кіру аяқталмады. Қайталап көріңіз.|Не удалось завершить вход через Google. Попробуйте ещё раз.
+Google sign-in was cancelled.|Google арқылы кіруден бас тартылды.|Вход через Google отменён.
+This email has an existing account. Use its original sign-in method.|Бұл поштаға аккаунт тіркелген. Бұрынғы кіру әдісін қолданыңыз.|Для этой почты уже есть аккаунт. Используйте прежний способ входа.
+Use a Gmail or Google Workspace account to continue.|Жалғастыру үшін Gmail немесе Google Workspace аккаунтын қолданыңыз.|Для продолжения используйте аккаунт Gmail или Google Workspace.
